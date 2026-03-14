@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>kaki记数工具-V2.0Pro</title>
+    <title>kaki记数表测试</title>
     <style>
         :root {
             --m-bg: #f5f3f0;
@@ -24,10 +24,9 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* 防止整体滚动，让内部滚动 */
+            overflow: hidden; /* 防止页面整体滚动 */
         }
         
-        /* 顶部工具栏 */
         .toolbar { 
             background: #ffffff; padding: 15px; border-radius: 15px; 
             box-shadow: 0 4px 15px rgba(90,90,90,0.05); 
@@ -36,98 +35,115 @@
         }
         .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
         
-        /* 档位切换区 */
-        .batch-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 8px; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .tab { padding: 6px 15px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid transparent; }
+        /* 档位切换样式优化 */
+        .batch-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 8px; white-space: nowrap; align-items: center; }
+        .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; }
         .tab.active { background: var(--m-blue-main); color: white; border-color: #8da1b0; font-weight: bold; }
-        .add-tab-btn { padding: 5px 10px; background: #fff; border: 1px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; }
+        .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-        .main-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            flex-grow: 1; 
-            min-height: 0; /* 必须加这个才能让内部子元素正常overflow */
+        .button-group { 
+            display: flex; gap: 10px; width: 100%; justify-content: space-between; 
+            border-top: 1px solid #f0edeb; padding-top: 10px;
         }
+        .button-group button { flex: 1; padding: 8px; font-size: 12px; }
 
-        /* 数字表区域 - 调小了一点高度给清单 */
+        .main-container { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; }
+
         .pool-box { 
             background: white; padding: 15px; border-radius: 15px; 
             box-shadow: 0 4px 12px rgba(90,90,90,0.03);
             display: flex; flex-direction: column;
-            height: 40vh; flex-shrink: 0;
+            height: 35vh; flex-shrink: 0;
         }
 
-        /* 顾客清单区域 - 独立且更高 */
+        /* 顾客清单：高度增加且独立滑动 */
         .cust-box { 
             background: white; padding: 15px; border-radius: 15px; 
-            box-shadow: 0 4px 12px rgba(90,90,90,0.03);
-            flex-grow: 1; /* 占据剩余所有空间 */
+            box-shadow: 0 4px 12px rgba(90,90,90,0.03); 
+            flex-grow: 1; 
             display: flex; flex-direction: column;
             min-height: 0;
         }
 
         .scroll-area {
-            overflow-y: auto; flex-grow: 1; margin-top: 10px; 
+            overflow-y: auto; flex-grow: 1; margin-top: 10px; padding: 5px; 
             -webkit-overflow-scrolling: touch;
-            padding-right: 5px;
         }
 
-        /* 网格和卡片样式 */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px; position: relative; }
+        
         .num-card { 
-            height: 42px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
+            height: 46px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
             display: flex; align-items: center; justify-content: center; font-weight: bold;
             border-radius: 8px; cursor: pointer; transition: 0.2s; background: rgba(156, 177, 192, 0.05);
             position: relative;
         }
-        .num-card.selected { background: var(--m-yellow-act); border-color: #d1bf96; color: #7c6d4d; transform: scale(1.05); z-index: 1; }
-        .num-card.sold { background: #e9e7e4; border-color: #d8d3cd; color: #b0adb0; text-decoration: line-through; opacity: 0.7; }
+        .num-card.selected { background: var(--m-yellow-act); border-color: #d1bf96; color: #7c6d4d; transform: scale(1.05); z-index: 10; }
+        .num-card.sold { background: #e9e7e4; border-color: #d8d3cd; color: #b0adb0; text-decoration: line-through; cursor: pointer; opacity: 0.7; }
+
+        .owner-tip {
+            position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 5px 10px; border-radius: 6px;
+            font-size: 12px; white-space: nowrap; pointer-events: none; z-index: 9999; 
+            animation: fadeInPop 0.2s ease-out;
+        }
+        .owner-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: rgba(0,0,0,0.8); }
+        
+        @keyframes fadeInPop { from { opacity: 0; transform: translateX(-50%) translateY(5px) scale(0.9); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
 
         .customer-card { 
             background: #ffffff; border: 1.5px solid var(--m-border); border-radius: 12px; 
-            padding: 12px; margin-bottom: 10px; transition: 0.3s;
+            padding: 15px; margin-bottom: 12px; transition: 0.3s;
         }
-        .customer-card.can-receive { border-color: var(--m-green-main); background: var(--m-green-rec); }
-        
-        .tag { background: var(--m-blue-main); color: white; padding: 3px 8px; border-radius: 6px; font-size: 12px; margin: 2px; display: inline-block; }
-        .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 10px; font-style: italic; }
-        input { padding: 8px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: #fffcf9; }
-        button { padding: 8px 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .customer-card.can-receive { border-color: var(--m-green-main); background: var(--m-green-rec); cursor: pointer; }
+        .cust-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .cust-info { display: flex; align-items: center; gap: 8px; }
+        .cust-name { font-weight: bold; color: var(--m-text); }
+        .cust-count { background: var(--m-yellow-act); color: #7c6d4d; border: 1px solid #d1bf96; border-radius: 12px; padding: 1px 8px; font-size: 11px; }
+        .batch-sep { color: var(--m-danger); font-weight: bold; margin: 0 4px; font-size: 14px; align-self: center; }
+        .tag-box { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .tag { background: var(--m-blue-main); color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; }
+        input { padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: #fffcf9; }
+        button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .btn-blue-outline { background: transparent; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); }
         .btn-green { background: var(--m-green-main); color: white; }
-        #statusMsg { background: var(--m-yellow-act); padding: 8px; border-radius: 8px; color: #7c6d4d; font-size: 12px; margin-bottom: 8px; text-align: center; border: 1px solid #d1bf96; }
-        h4 { color: #8a8a8a; font-size: 14px; margin: 0; display: flex; justify-content: space-between; }
-        
-        .owner-tip {
-            position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 4px;
-            font-size: 11px; white-space: nowrap; z-index: 100;
-        }
+        #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; font-weight: 500; border: 1px solid #d1bf96; }
+        h4 { color: #8a8a8a; font-size: 16px; margin: 0; display: flex; justify-content: space-between; align-items: center; }
+
+        .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 15px; margin-bottom: 5px; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="toolbar">
-    <div class="batch-tabs" id="batchTabs"></div>
-    <div class="flex-row">
-        <input type="text" id="custInput" placeholder="新顾客名字" style="flex: 1;">
-        <button class="btn-green" onclick="addCustomer()">添加顾客</button>
-        <button class="add-tab-btn" onclick="addNewBatch()">＋新日期/档位</button>
+    <div class="batch-tabs">
+        <button class="add-tab-btn" onclick="addNewBatch()">+ 新档位</button>
+        <div id="batchTabsList" style="display:flex; gap:8px;"></div>
     </div>
     <div class="flex-row">
-        <input type="text" id="searchBar" placeholder="🔍搜索顾客..." style="flex: 1;" oninput="renderCustomers()">
-        <span style="font-size:12px; color: #999;">总数:</span>
-        <input type="number" id="totalNum" value="50" style="width: 50px;" onchange="renderGrid()">
+        <span>范围: 1 到</span>
+        <input type="number" id="totalNum" value="50" style="width: 55px;" onchange="updateBatchTotal()">
+        <input type="text" id="custInput" placeholder="输入顾客名字" style="flex: 1;">
+        <button class="btn-green" onclick="addCustomer()">添加顾客</button>
+    </div>
+    <div class="flex-row">
+        <input type="text" id="searchBar" placeholder="🔍快速过滤顾客..." style="flex: 1;" oninput="renderCustomers()">
+        <span style="color:var(--m-danger); font-size:11px;" onclick="deleteCurrentBatch()">删除当前档</span>
+    </div>
+    <div class="button-group">
+        <button class="btn-blue-outline" onclick="resetSoldStatus()">重置本档数字</button>
+        <button class="btn-blue-outline" style="color:var(--m-danger); border-color:var(--m-danger);" onclick="initSystem()">清空所有档位</button>
     </div>
 </div>
 
 <div id="statusMsg" style="display:none;"></div>
 
 <div class="main-container">
-    <div class="pool-box">
+    <div class="section-box pool-box">
         <h4>
-            <span>🔢 数字池</span>
-            <span style="font-size: 11px; color: var(--m-blue-main);" onclick="copyRemaining()">复制余号</span>
+            <span>🔢 数字表</span>
+            <span class="copy-btn" onclick="copyRemaining()">复制剩余号码</span>
         </h4>
         <div class="scroll-area">
             <div id="numberGrid" class="grid"></div>
@@ -135,7 +151,7 @@
     </div>
 
     <div class="cust-box">
-        <h4><span>👥 顾客清单</span> <span style="font-size:11px; color:var(--m-danger);" onclick="deleteCurrentBatch()">删除本档</span></h4>
+        <h4>👥 顾客清单</h4>
         <div class="scroll-area" id="customerScroll">
             <div id="customerList"></div>
             <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
@@ -144,44 +160,94 @@
 </div>
 
 <script>
-    // 数据结构：batches = [{ id: '日期', customers: [], selectedNums: [] }]
-    let batches = JSON.parse(localStorage.getItem('kaki_data')) || [{ id: '默认档', customers: [] }];
-    let currentBatchIdx = 0;
+    // 数据结构：batches = [{ id: '名称', customers: [], total: 50 }]
+    let batches = JSON.parse(localStorage.getItem('kaki_v2_data')) || [{ id: '默认档', customers: [], total: 50 }];
+    let currentIdx = 0;
     let selectedNums = [];
     let tipTimer = null;
 
-    function save() { localStorage.setItem('kaki_data', JSON.stringify(batches)); }
+    function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
 
     function addNewBatch() {
-        const name = prompt("请输入新档位名称（如：03.14）", new Date().toLocaleDateString().slice(5));
+        const name = prompt("请输入新档位名称", "新档位");
         if(!name) return;
-        batches.push({ id: name, customers: [] });
-        currentBatchIdx = batches.length - 1;
+        batches.push({ id: name, customers: [], total: 50 });
+        currentIdx = batches.length - 1;
         renderAll();
         save();
     }
 
+    function switchBatch(idx) {
+        currentIdx = idx;
+        selectedNums = [];
+        renderAll();
+    }
+
+    function updateBatchTotal() {
+        const val = parseInt(document.getElementById('totalNum').value);
+        batches[currentIdx].total = val || 50;
+        renderGrid();
+        save();
+    }
+
     function deleteCurrentBatch() {
-        if(batches.length <= 1) return alert("至少保留一个档位喔！");
-        if(confirm(`确定删除整个【${batches[currentBatchIdx].id}】档位吗？`)) {
-            batches.splice(currentBatchIdx, 1);
-            currentBatchIdx = 0;
+        if(batches.length <= 1) return alert("至少保留一个档位哦！");
+        if(confirm(`确定删除档位【${batches[currentIdx].id}】吗？`)) {
+            batches.splice(currentIdx, 1);
+            currentIdx = 0;
             renderAll();
             save();
         }
     }
 
-    function switchBatch(idx) {
-        currentBatchIdx = idx;
-        selectedNums = []; // 切换档位时清除当前选中的待分配数字
-        renderAll();
+    function copyText(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        alert("已复制到剪贴板！");
     }
+
+    function copyRemaining() {
+        const currentBatch = batches[currentIdx];
+        const soldNums = currentBatch.customers.flatMap(c => c.nums.flat());
+        let remaining = [];
+        for(let i=1; i<=currentBatch.total; i++) {
+            if(!soldNums.includes(i)) remaining.push(i);
+        }
+        if(remaining.length === 0) return alert("已经全部卖完啦！");
+        copyText(`【${currentBatch.id}】剩余号码 [${remaining.length}个]：\n${remaining.join(', ')}`);
+    }
+
+    function copyCustomerNums(cIdx) {
+        const c = batches[currentIdx].customers[cIdx];
+        if(c.nums.length === 0) return;
+        const formatted = c.nums.map(batch => batch.join(' ')).join(' | ');
+        copyText(`${c.name}的成绩单(  •̀ω•́  )ｷﾘｯ\n${formatted}`);
+    }
+
+    function showOwnerTip(event, num) {
+        const owner = batches[currentIdx].customers.find(c => c.nums.flat().includes(num));
+        if(!owner) return;
+        document.querySelectorAll('.owner-tip').forEach(t => t.remove());
+        const tip = document.createElement('div');
+        tip.className = 'owner-tip';
+        tip.innerText = `拥有者: ${owner.name}`;
+        event.currentTarget.appendChild(tip);
+        clearTimeout(tipTimer);
+        tipTimer = setTimeout(() => { if(tip) tip.remove(); }, 2000);
+    }
+
+    function initSystem() { if(confirm("确定清空所有档位数据吗？")) { batches = [{ id: '默认档', customers: [], total: 50 }]; currentIdx = 0; renderAll(); save(); } }
+    function resetSoldStatus() { if(confirm("确定清空本档所有数字吗？")) { batches[currentIdx].customers.forEach(c => c.nums = []); renderAll(); save(); } }
 
     function addCustomer() {
         const input = document.getElementById('custInput');
         const name = input.value.trim();
         if(!name) return;
-        batches[currentBatchIdx].customers.unshift({ name: name, nums: [] });
+        batches[currentIdx].customers.unshift({ name: name, nums: [] });
         input.value = '';
         renderAll();
         save();
@@ -194,101 +260,102 @@
         renderAll();
     }
 
-    function bindToCustomer(cIdx) {
+    function bindToCustomer(index) {
         if(selectedNums.length === 0) return;
-        batches[currentBatchIdx].customers[cIdx].nums.push([...selectedNums].sort((a,b)=>a-b));
+        batches[currentIdx].customers[index].nums.push([...selectedNums].sort((a,b) => a-b));
         selectedNums = [];
         renderAll();
         save();
     }
 
-    function unbindNumber(cIdx, bIdx, num) {
-        if(confirm(`确定删除数字 ${num} 吗？`)) {
-            const cust = batches[currentBatchIdx].customers[cIdx];
-            cust.nums[bIdx] = cust.nums[bIdx].filter(n => n !== num);
-            if(cust.nums[bIdx].length === 0) cust.nums.splice(bIdx, 1);
+    function unbindNumber(custIdx, batchIdx, num) {
+        const customerName = batches[currentIdx].customers[custIdx].name;
+        if(confirm(`确定删除 【${customerName}】 的数字 【${num}】 吗？`)) {
+            batches[currentIdx].customers[custIdx].nums[batchIdx] = batches[currentIdx].customers[custIdx].nums[batchIdx].filter(n => n !== num);
+            if(batches[currentIdx].customers[custIdx].nums[batchIdx].length === 0) batches[currentIdx].customers[custIdx].nums.splice(batchIdx, 1);
             renderAll();
             save();
         }
     }
 
+    function deleteCustomer(idx) { if(confirm(`删除顾客 ${batches[currentIdx].customers[idx].name}？`)) { batches[currentIdx].customers.splice(idx, 1); renderAll(); save(); } }
+
     function renderAll() {
+        document.getElementById('totalNum').value = batches[currentIdx].total;
         renderTabs();
         renderGrid();
         renderCustomers();
         const msg = document.getElementById('statusMsg');
-        msg.style.display = selectedNums.length > 0 ? 'block' : 'none';
-        msg.innerHTML = `🎯 选中 [ ${selectedNums.join(',')} ]，点下方顾客名绑定`;
+        if(selectedNums.length > 0) {
+            msg.style.display = 'block';
+            msg.innerHTML = `🎯 已选中 [ ${selectedNums.join(', ')} ]，点选下方人名绑定`;
+        } else {
+            msg.style.display = 'none';
+        }
     }
 
     function renderTabs() {
-        const container = document.getElementById('batchTabs');
-        container.innerHTML = batches.map((b, i) => 
-            `<div class="tab ${i===currentBatchIdx?'active':''}" onclick="switchBatch(${i})">${b.id}</div>`
-        ).join('');
+        const list = document.getElementById('batchTabsList');
+        list.innerHTML = batches.map((b, i) => `
+            <div class="tab ${i === currentIdx ? 'active' : ''}" onclick="switchBatch(${i})">${b.id}</div>
+        `).join('');
     }
 
     function renderGrid() {
         const grid = document.getElementById('numberGrid');
-        const total = parseInt(document.getElementById('totalNum').value) || 50;
-        const soldNums = batches[currentBatchIdx].customers.flatMap(c => c.nums.flat());
+        const total = batches[currentIdx].total;
+        const soldNums = batches[currentIdx].customers.flatMap(c => c.nums.flat());
         grid.innerHTML = '';
         for(let i=1; i<=total; i++) {
+            const div = document.createElement('div');
             const isSold = soldNums.includes(i);
             const isSelected = selectedNums.includes(i);
-            const div = document.createElement('div');
-            div.className = `num-card ${isSold?'sold':''} ${isSelected?'selected':''}`;
+            div.className = `num-card ${isSold ? 'sold' : ''} ${isSelected ? 'selected' : ''}`;
             div.innerText = i;
-            div.onclick = isSold ? (e) => showOwnerTip(e, i) : () => selectNumber(i);
+            if(!isSold) {
+                div.onclick = () => selectNumber(i);
+            } else {
+                div.onclick = (e) => showOwnerTip(e, i);
+            }
             grid.appendChild(div);
         }
     }
 
     function renderCustomers() {
         const list = document.getElementById('customerList');
-        const search = document.getElementById('searchBar').value.toLowerCase();
+        const searchTxt = document.getElementById('searchBar').value.toLowerCase();
         list.innerHTML = '';
-        batches[currentBatchIdx].customers.forEach((c, cIdx) => {
-            if(search && !c.name.toLowerCase().includes(search)) return;
+        batches[currentIdx].customers.forEach((c, cIdx) => {
+            if(searchTxt && !c.name.toLowerCase().includes(searchTxt)) return;
             const card = document.createElement('div');
-            card.className = `customer-card ${selectedNums.length>0?'can-receive':''}`;
-            if(selectedNums.length>0) card.onclick = () => bindToCustomer(cIdx);
+            card.className = `customer-card ${selectedNums.length > 0 ? 'can-receive' : ''}`;
+            if(selectedNums.length > 0) card.onclick = () => bindToCustomer(cIdx);
             
-            const tags = c.nums.map((batch, bIdx) => 
-                batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
-            ).join('<span style="color:#ccc">|</span>');
+            let tagsHtml = '';
+            c.nums.forEach((batch, bIdx) => {
+                const batchHtml = batch.map(n => 
+                    `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`
+                ).join('');
+                tagsHtml += batchHtml;
+                if(bIdx < c.nums.length - 1) tagsHtml += `<span class="batch-sep">|</span>`;
+            });
+
+            const totalCount = c.nums.flat().length;
 
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-weight:bold;">👤 ${c.name} (${c.nums.flat().length}张)</span>
-                    <span style="color:var(--m-danger); font-size:11px;" onclick="event.stopPropagation(); deleteCust(${cIdx})">删除</span>
+                <div class="cust-header">
+                    <div class="cust-info">
+                        <span class="cust-name">👤 ${c.name}</span>
+                        <span class="cust-count">${totalCount} 张</span>
+                        <span class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</span>
+                    </div>
+                    <span style="color:#b09c9c; font-size:11px;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
                 </div>
-                <div style="margin-top:8px;">${tags || '<small style="color:#ccc">待分配...</small>'}</div>
+                <div class="tag-box" style="margin-top:10px;">${tagsHtml || '<small style="color:#d0ccc6">点击绑定...</small>'}</div>
             `;
             list.appendChild(card);
         });
     }
-
-    function showOwnerTip(e, num) {
-        const owner = batches[currentBatchIdx].customers.find(c => c.nums.flat().includes(num));
-        if(!owner) return;
-        const old = document.querySelector('.owner-tip'); if(old) old.remove();
-        const tip = document.createElement('div');
-        tip.className = 'owner-tip'; tip.innerText = `拥有者: ${owner.name}`;
-        e.currentTarget.appendChild(tip);
-        setTimeout(() => tip.remove(), 2000);
-    }
-
-    function deleteCust(idx) { if(confirm("删除该顾客？")) { batches[currentBatchIdx].customers.splice(idx, 1); renderAll(); save(); } }
-
-    function copyRemaining() {
-        const total = parseInt(document.getElementById('totalNum').value) || 50;
-        const soldNums = batches[currentBatchIdx].customers.flatMap(c => c.nums.flat());
-        let rem = []; for(let i=1; i<=total; i++) if(!soldNums.includes(i)) rem.push(i);
-        const text = `【${batches[currentBatchIdx].id}】剩余号码(${rem.length}个):\n${rem.join(', ')}`;
-        navigator.clipboard.writeText(text).then(() => alert("已复制剩余号码！"));
-    }
-
     renderAll();
 </script>
 </body>
