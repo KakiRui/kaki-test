@@ -21,10 +21,9 @@
             margin: 0; padding: 12px; 
             background: var(--m-bg); 
             color: var(--m-text);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* 防止页面整体滚动 */
         }
         
         .toolbar { 
@@ -32,86 +31,71 @@
             box-shadow: 0 4px 15px rgba(90,90,90,0.05); 
             margin-bottom: 12px;
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
         .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
         
-        /* 档位切换样式优化 */
         .batch-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 8px; white-space: nowrap; align-items: center; }
-        .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; }
+        .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; transition: 0.2s; }
         .tab.active { background: var(--m-blue-main); color: white; border-color: #8da1b0; font-weight: bold; }
-        .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; flex-shrink: 0; }
 
         .button-group { 
             display: flex; gap: 10px; width: 100%; justify-content: space-between; 
             border-top: 1px solid #f0edeb; padding-top: 10px;
         }
-        .button-group button { flex: 1; padding: 8px; font-size: 12px; }
-
-        .main-container { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; }
+        .button-group button { flex: 1; padding: 8px; font-size: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
 
         .pool-box { 
-            background: white; padding: 15px; border-radius: 15px; 
+            background: white; padding: 18px; border-radius: 15px; 
             box-shadow: 0 4px 12px rgba(90,90,90,0.03);
             display: flex; flex-direction: column;
-            height: 35vh; flex-shrink: 0;
-        }
-
-        /* 顾客清单：高度增加且独立滑动 */
-        .cust-box { 
-            background: white; padding: 15px; border-radius: 15px; 
-            box-shadow: 0 4px 12px rgba(90,90,90,0.03); 
-            flex-grow: 1; 
-            display: flex; flex-direction: column;
-            min-height: 0;
         }
 
         .scroll-area {
-            overflow-y: auto; flex-grow: 1; margin-top: 10px; padding: 5px; 
+            max-height: 45vh; overflow-y: auto; margin-top: 10px; padding: 5px; 
             -webkit-overflow-scrolling: touch;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px; position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 10px; }
         
         .num-card { 
-            height: 46px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
+            height: 48px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
             display: flex; align-items: center; justify-content: center; font-weight: bold;
             border-radius: 8px; cursor: pointer; transition: 0.2s; background: rgba(156, 177, 192, 0.05);
-            position: relative;
         }
-        .num-card.selected { background: var(--m-yellow-act); border-color: #d1bf96; color: #7c6d4d; transform: scale(1.05); z-index: 10; }
-        .num-card.sold { background: #e9e7e4; border-color: #d8d3cd; color: #b0adb0; text-decoration: line-through; cursor: pointer; opacity: 0.7; }
+        .num-card.selected { background: var(--m-yellow-act); border-color: #d1bf96; color: #7c6d4d; transform: scale(1.05); }
+        .num-card.sold { background: #e9e7e4; border-color: #d8d3cd; color: #b0adb0; text-decoration: line-through; opacity: 0.7; }
 
-        .owner-tip {
-            position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.8); color: white; padding: 5px 10px; border-radius: 6px;
-            font-size: 12px; white-space: nowrap; pointer-events: none; z-index: 9999; 
-            animation: fadeInPop 0.2s ease-out;
+        /* 核心改进：拥有者提示框置顶 */
+        .global-owner-tip {
+            position: fixed;
+            background: rgba(0,0,0,0.85); color: white; padding: 8px 16px; border-radius: 8px;
+            font-size: 13px; font-weight: bold; pointer-events: none; z-index: 99999; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: tipPop 0.2s ease-out;
+            transform: translate(-50%, -120%);
         }
-        .owner-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: rgba(0,0,0,0.8); }
-        
-        @keyframes fadeInPop { from { opacity: 0; transform: translateX(-50%) translateY(5px) scale(0.9); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+        @keyframes tipPop { from { opacity: 0; transform: translate(-50%, -100%); } to { opacity: 1; transform: translate(-50%, -120%); } }
 
         .customer-card { 
             background: #ffffff; border: 1.5px solid var(--m-border); border-radius: 12px; 
-            padding: 15px; margin-bottom: 12px; transition: 0.3s;
+            padding: 15px; margin-bottom: 12px;
         }
         .customer-card.can-receive { border-color: var(--m-green-main); background: var(--m-green-rec); cursor: pointer; }
         .cust-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .cust-info { display: flex; align-items: center; gap: 8px; }
         .cust-name { font-weight: bold; color: var(--m-text); }
         .cust-count { background: var(--m-yellow-act); color: #7c6d4d; border: 1px solid #d1bf96; border-radius: 12px; padding: 1px 8px; font-size: 11px; }
-        .batch-sep { color: var(--m-danger); font-weight: bold; margin: 0 4px; font-size: 14px; align-self: center; }
         .tag-box { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
         .tag { background: var(--m-blue-main); color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
         .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; }
         input { padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: #fffcf9; }
-        button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
-        .btn-blue-outline { background: transparent; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); }
-        .btn-green { background: var(--m-green-main); color: white; }
-        #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; font-weight: 500; border: 1px solid #d1bf96; }
-        h4 { color: #8a8a8a; font-size: 16px; margin: 0; display: flex; justify-content: space-between; align-items: center; }
+        button.btn-green { background: var(--m-green-main); color: white; border: none; }
+        .clear-search-btn { background: #eeece8; color: #b09c9c; padding: 8px 12px; font-size: 12px; border-radius: 8px; font-weight: bold; border: none; }
 
-        .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 15px; margin-bottom: 5px; font-style: italic; }
+        #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid #d1bf96; }
+        .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 20px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -129,19 +113,19 @@
     </div>
     <div class="flex-row">
         <input type="text" id="searchBar" placeholder="🔍快速过滤顾客..." style="flex: 1;" oninput="renderCustomers()">
-        <span style="color:var(--m-danger); font-size:11px;" onclick="deleteCurrentBatch()">删除当前档</span>
+        <button class="clear-search-btn" onclick="clearFilter()">清空</button>
     </div>
     <div class="button-group">
-        <button class="btn-blue-outline" onclick="resetSoldStatus()">重置本档数字</button>
-        <button class="btn-blue-outline" style="color:var(--m-danger); border-color:var(--m-danger);" onclick="initSystem()">清空所有档位</button>
+        <button style="background:transparent; border:1px solid var(--m-blue-main); color:var(--m-blue-main);" onclick="resetSoldStatus()">重置本档数字</button>
+        <button style="background:transparent; border:1px solid var(--m-danger); color:var(--m-danger);" onclick="initSystem()">清空所有档位</button>
     </div>
 </div>
 
 <div id="statusMsg" style="display:none;"></div>
 
 <div class="main-container">
-    <div class="section-box pool-box">
-        <h4>
+    <div class="pool-box">
+        <h4 style="margin:0; color:#8a8a8a; display:flex; justify-content:space-between;">
             <span>🔢 数字表</span>
             <span class="copy-btn" onclick="copyRemaining()">复制剩余号码</span>
         </h4>
@@ -150,23 +134,37 @@
         </div>
     </div>
 
-    <div class="cust-box">
-        <h4>👥 顾客清单</h4>
-        <div class="scroll-area" id="customerScroll">
-            <div id="customerList"></div>
-            <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
-        </div>
+    <div style="background:white; padding:18px; border-radius:15px; box-shadow:0 4px 12px rgba(90,90,90,0.03); margin-top:12px;">
+        <h4 style="margin:0 0 15px 0; color:#8a8a8a;">👥 顾客清单</h4>
+        <div id="customerList"></div>
+        <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
     </div>
 </div>
 
 <script>
-    // 数据结构：batches = [{ id: '名称', customers: [], total: 50 }]
     let batches = JSON.parse(localStorage.getItem('kaki_v2_data')) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
     let selectedNums = [];
     let tipTimer = null;
 
     function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
+
+    // 重点：再次点击当前档位弹出删除确认
+    function handleTabClick(idx) {
+        if (currentIdx === idx) {
+            if (batches.length <= 1) return alert("至少保留一个档位哦！");
+            if (confirm(`确定要删除当前的【${batches[idx].id}】档位吗？数据将无法恢复！`)) {
+                batches.splice(idx, 1);
+                currentIdx = 0;
+                renderAll();
+                save();
+            }
+        } else {
+            currentIdx = idx;
+            selectedNums = [];
+            renderAll();
+        }
+    }
 
     function addNewBatch() {
         const name = prompt("请输入新档位名称", "新档位");
@@ -177,67 +175,52 @@
         save();
     }
 
-    function switchBatch(idx) {
-        currentIdx = idx;
-        selectedNums = [];
-        renderAll();
+    function clearFilter() {
+        document.getElementById('searchBar').value = '';
+        renderCustomers();
     }
 
     function updateBatchTotal() {
-        const val = parseInt(document.getElementById('totalNum').value);
-        batches[currentIdx].total = val || 50;
+        batches[currentIdx].total = parseInt(document.getElementById('totalNum').value) || 50;
         renderGrid();
         save();
-    }
-
-    function deleteCurrentBatch() {
-        if(batches.length <= 1) return alert("至少保留一个档位哦！");
-        if(confirm(`确定删除档位【${batches[currentIdx].id}】吗？`)) {
-            batches.splice(currentIdx, 1);
-            currentIdx = 0;
-            renderAll();
-            save();
-        }
-    }
-
-    function copyText(text) {
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-        alert("已复制到剪贴板！");
-    }
-
-    function copyRemaining() {
-        const currentBatch = batches[currentIdx];
-        const soldNums = currentBatch.customers.flatMap(c => c.nums.flat());
-        let remaining = [];
-        for(let i=1; i<=currentBatch.total; i++) {
-            if(!soldNums.includes(i)) remaining.push(i);
-        }
-        if(remaining.length === 0) return alert("已经全部卖完啦！");
-        copyText(`【${currentBatch.id}】剩余号码 [${remaining.length}个]：\n${remaining.join(', ')}`);
-    }
-
-    function copyCustomerNums(cIdx) {
-        const c = batches[currentIdx].customers[cIdx];
-        if(c.nums.length === 0) return;
-        const formatted = c.nums.map(batch => batch.join(' ')).join(' | ');
-        copyText(`${c.name}的成绩单(  •̀ω•́  )ｷﾘｯ\n${formatted}`);
     }
 
     function showOwnerTip(event, num) {
         const owner = batches[currentIdx].customers.find(c => c.nums.flat().includes(num));
         if(!owner) return;
-        document.querySelectorAll('.owner-tip').forEach(t => t.remove());
+        
+        const oldTip = document.querySelector('.global-owner-tip');
+        if(oldTip) oldTip.remove();
+
         const tip = document.createElement('div');
-        tip.className = 'owner-tip';
+        tip.className = 'global-owner-tip';
         tip.innerText = `拥有者: ${owner.name}`;
-        event.currentTarget.appendChild(tip);
+        
+        const rect = event.target.getBoundingClientRect();
+        tip.style.left = (rect.left + rect.width / 2) + 'px';
+        tip.style.top = rect.top + 'px'; // 这里使用了fixed定位配合top/left
+        
+        document.body.appendChild(tip);
+        
         clearTimeout(tipTimer);
-        tipTimer = setTimeout(() => { if(tip) tip.remove(); }, 2000);
+        tipTimer = setTimeout(() => { if(tip) tip.remove(); }, 1800);
+    }
+
+    function copyText(text) {
+        const t = document.createElement("textarea");
+        t.value = text; document.body.appendChild(t);
+        t.select(); document.execCommand("copy");
+        document.body.removeChild(t);
+        alert("已复制！");
+    }
+
+    function copyRemaining() {
+        const b = batches[currentIdx];
+        const sold = b.customers.flatMap(c => c.nums.flat());
+        let rem = [];
+        for(let i=1; i<=b.total; i++) if(!sold.includes(i)) rem.push(i);
+        copyText(`【${b.id}】余号[${rem.length}]:\n${rem.join(', ')}`);
     }
 
     function initSystem() { if(confirm("确定清空所有档位数据吗？")) { batches = [{ id: '默认档', customers: [], total: 50 }]; currentIdx = 0; renderAll(); save(); } }
@@ -245,9 +228,8 @@
 
     function addCustomer() {
         const input = document.getElementById('custInput');
-        const name = input.value.trim();
-        if(!name) return;
-        batches[currentIdx].customers.unshift({ name: name, nums: [] });
+        if(!input.value.trim()) return;
+        batches[currentIdx].customers.unshift({ name: input.value.trim(), nums: [] });
         input.value = '';
         renderAll();
         save();
@@ -268,90 +250,68 @@
         save();
     }
 
-    function unbindNumber(custIdx, batchIdx, num) {
-        const customerName = batches[currentIdx].customers[custIdx].name;
-        if(confirm(`确定删除 【${customerName}】 的数字 【${num}】 吗？`)) {
-            batches[currentIdx].customers[custIdx].nums[batchIdx] = batches[currentIdx].customers[custIdx].nums[batchIdx].filter(n => n !== num);
-            if(batches[currentIdx].customers[custIdx].nums[batchIdx].length === 0) batches[currentIdx].customers[custIdx].nums.splice(batchIdx, 1);
+    function unbindNumber(cIdx, bIdx, num) {
+        if(confirm(`确定删除数字 ${num} 吗？`)) {
+            batches[currentIdx].customers[cIdx].nums[bIdx] = batches[currentIdx].customers[cIdx].nums[bIdx].filter(n => n !== num);
+            if(batches[currentIdx].customers[cIdx].nums[bIdx].length === 0) batches[currentIdx].customers[cIdx].nums.splice(bIdx, 1);
             renderAll();
             save();
         }
     }
 
-    function deleteCustomer(idx) { if(confirm(`删除顾客 ${batches[currentIdx].customers[idx].name}？`)) { batches[currentIdx].customers.splice(idx, 1); renderAll(); save(); } }
+    function deleteCustomer(idx) { if(confirm(`彻底删除顾客 ${batches[currentIdx].customers[idx].name}？`)) { batches[currentIdx].customers.splice(idx, 1); renderAll(); save(); } }
 
     function renderAll() {
         document.getElementById('totalNum').value = batches[currentIdx].total;
-        renderTabs();
+        const tabs = document.getElementById('batchTabsList');
+        tabs.innerHTML = batches.map((b, i) => `<div class="tab ${i === currentIdx ? 'active' : ''}" onclick="handleTabClick(${i})">${b.id}</div>`).join('');
+        
         renderGrid();
         renderCustomers();
+        
         const msg = document.getElementById('statusMsg');
-        if(selectedNums.length > 0) {
-            msg.style.display = 'block';
-            msg.innerHTML = `🎯 已选中 [ ${selectedNums.join(', ')} ]，点选下方人名绑定`;
-        } else {
-            msg.style.display = 'none';
-        }
-    }
-
-    function renderTabs() {
-        const list = document.getElementById('batchTabsList');
-        list.innerHTML = batches.map((b, i) => `
-            <div class="tab ${i === currentIdx ? 'active' : ''}" onclick="switchBatch(${i})">${b.id}</div>
-        `).join('');
+        msg.style.display = selectedNums.length > 0 ? 'block' : 'none';
+        msg.innerHTML = `🎯 已选中 [ ${selectedNums.join(',')} ]，点人名绑定`;
     }
 
     function renderGrid() {
         const grid = document.getElementById('numberGrid');
-        const total = batches[currentIdx].total;
         const soldNums = batches[currentIdx].customers.flatMap(c => c.nums.flat());
         grid.innerHTML = '';
-        for(let i=1; i<=total; i++) {
+        for(let i=1; i<=batches[currentIdx].total; i++) {
             const div = document.createElement('div');
             const isSold = soldNums.includes(i);
-            const isSelected = selectedNums.includes(i);
-            div.className = `num-card ${isSold ? 'sold' : ''} ${isSelected ? 'selected' : ''}`;
+            div.className = `num-card ${isSold ? 'sold' : ''} ${selectedNums.includes(i) ? 'selected' : ''}`;
             div.innerText = i;
-            if(!isSold) {
-                div.onclick = () => selectNumber(i);
-            } else {
-                div.onclick = (e) => showOwnerTip(e, i);
-            }
+            div.onclick = isSold ? (e) => showOwnerTip(e, i) : () => selectNumber(i);
             grid.appendChild(div);
         }
     }
 
     function renderCustomers() {
         const list = document.getElementById('customerList');
-        const searchTxt = document.getElementById('searchBar').value.toLowerCase();
+        const search = document.getElementById('searchBar').value.toLowerCase();
         list.innerHTML = '';
         batches[currentIdx].customers.forEach((c, cIdx) => {
-            if(searchTxt && !c.name.toLowerCase().includes(searchTxt)) return;
+            if(search && !c.name.toLowerCase().includes(search)) return;
             const card = document.createElement('div');
             card.className = `customer-card ${selectedNums.length > 0 ? 'can-receive' : ''}`;
             if(selectedNums.length > 0) card.onclick = () => bindToCustomer(cIdx);
             
-            let tagsHtml = '';
-            c.nums.forEach((batch, bIdx) => {
-                const batchHtml = batch.map(n => 
-                    `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`
-                ).join('');
-                tagsHtml += batchHtml;
-                if(bIdx < c.nums.length - 1) tagsHtml += `<span class="batch-sep">|</span>`;
-            });
-
-            const totalCount = c.nums.flat().length;
+            const tags = c.nums.map((batch, bIdx) => 
+                batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
+            ).join('<span style="color:#b09c9c;font-weight:bold;margin:0 5px;">|</span>');
 
             card.innerHTML = `
                 <div class="cust-header">
                     <div class="cust-info">
                         <span class="cust-name">👤 ${c.name}</span>
-                        <span class="cust-count">${totalCount} 张</span>
-                        <span class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</span>
+                        <span class="cust-count">${c.nums.flat().length}张</span>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制</button>
                     </div>
-                    <span style="color:#b09c9c; font-size:11px;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
+                    <span style="color:#ccc; font-size:11px;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
                 </div>
-                <div class="tag-box" style="margin-top:10px;">${tagsHtml || '<small style="color:#d0ccc6">点击绑定...</small>'}</div>
+                <div class="tag-box" style="margin-top:10px;">${tags || '<small style="color:#ccc">点击绑定...</small>'}</div>
             `;
             list.appendChild(card);
         });
