@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>kaki记数表-禁止二传</title>
+    <title>kaki记数表-测试</title>
     <style>
         :root {
             --m-bg: #f5f3f0;
@@ -21,9 +21,10 @@
             margin: 0; padding: 12px; 
             background: var(--m-bg); 
             color: var(--m-text);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* 防止页面整体滚动 */
         }
         
         .toolbar { 
@@ -34,11 +35,11 @@
         }
         .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
         
-        /* 档位切换样式 */
+        /* 档位切换样式优化 */
         .batch-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 8px; white-space: nowrap; align-items: center; }
-        .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; transition: 0.2s; }
+        .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; }
         .tab.active { background: var(--m-blue-main); color: white; border-color: #8da1b0; font-weight: bold; }
-        .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; flex-shrink: 0; }
+        .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; }
 
         .button-group { 
             display: flex; gap: 10px; width: 100%; justify-content: space-between; 
@@ -46,29 +47,33 @@
         }
         .button-group button { flex: 1; padding: 8px; font-size: 12px; }
 
-        .main-container { display: flex; flex-direction: column; gap: 12px; }
+        .main-container { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; }
 
         .pool-box { 
-            background: white; padding: 18px; border-radius: 15px; 
+            background: white; padding: 15px; border-radius: 15px; 
             box-shadow: 0 4px 12px rgba(90,90,90,0.03);
             display: flex; flex-direction: column;
-            position: relative;
+            height: 35vh; flex-shrink: 0;
+        }
+
+        /* 顾客清单：高度增加且独立滑动 */
+        .cust-box { 
+            background: white; padding: 15px; border-radius: 15px; 
+            box-shadow: 0 4px 12px rgba(90,90,90,0.03); 
+            flex-grow: 1; 
+            display: flex; flex-direction: column;
+            min-height: 0;
         }
 
         .scroll-area {
-            max-height: 45vh; overflow-y: auto; margin-top: 10px; padding: 5px; 
+            overflow-y: auto; flex-grow: 1; margin-top: 10px; padding: 5px; 
             -webkit-overflow-scrolling: touch;
         }
 
-        .cust-box { 
-            background: white; padding: 18px; border-radius: 15px; 
-            box-shadow: 0 4px 12px rgba(90,90,90,0.03); margin-bottom: 20px;
-        }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 10px; position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px; position: relative; }
         
         .num-card { 
-            height: 48px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
+            height: 46px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
             display: flex; align-items: center; justify-content: center; font-weight: bold;
             border-radius: 8px; cursor: pointer; transition: 0.2s; background: rgba(156, 177, 192, 0.05);
             position: relative;
@@ -83,6 +88,7 @@
             animation: fadeInPop 0.2s ease-out;
         }
         .owner-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: rgba(0,0,0,0.8); }
+        
         @keyframes fadeInPop { from { opacity: 0; transform: translateX(-50%) translateY(5px) scale(0.9); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
 
         .customer-card { 
@@ -123,6 +129,7 @@
     </div>
     <div class="flex-row">
         <input type="text" id="searchBar" placeholder="🔍快速过滤顾客..." style="flex: 1;" oninput="renderCustomers()">
+        <span style="color:var(--m-danger); font-size:11px;" onclick="deleteCurrentBatch()">删除当前档</span>
     </div>
     <div class="button-group">
         <button class="btn-blue-outline" onclick="resetSoldStatus()">重置本档数字</button>
@@ -144,13 +151,16 @@
     </div>
 
     <div class="cust-box">
-        <h4 style="margin-bottom:15px;">👥 顾客清单</h4>
-        <div id="customerList"></div>
-        <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
+        <h4>👥 顾客清单</h4>
+        <div class="scroll-area" id="customerScroll">
+            <div id="customerList"></div>
+            <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
+        </div>
     </div>
 </div>
 
 <script>
+    // 数据结构：batches = [{ id: '名称', customers: [], total: 50 }]
     let batches = JSON.parse(localStorage.getItem('kaki_v2_data')) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
     let selectedNums = [];
@@ -167,21 +177,10 @@
         save();
     }
 
-    // 交互优化：点击已选中的标签确认删除
-    function handleTabClick(idx) {
-        if (currentIdx === idx) {
-            if (batches.length <= 1) return alert("至少保留一个档位喔！");
-            if (confirm(`确定要删除当前的【${batches[idx].id}】档位吗？`)) {
-                batches.splice(idx, 1);
-                currentIdx = 0;
-                renderAll();
-                save();
-            }
-        } else {
-            currentIdx = idx;
-            selectedNums = [];
-            renderAll();
-        }
+    function switchBatch(idx) {
+        currentIdx = idx;
+        selectedNums = [];
+        renderAll();
     }
 
     function updateBatchTotal() {
@@ -189,6 +188,16 @@
         batches[currentIdx].total = val || 50;
         renderGrid();
         save();
+    }
+
+    function deleteCurrentBatch() {
+        if(batches.length <= 1) return alert("至少保留一个档位哦！");
+        if(confirm(`确定删除档位【${batches[currentIdx].id}】吗？`)) {
+            batches.splice(currentIdx, 1);
+            currentIdx = 0;
+            renderAll();
+            save();
+        }
     }
 
     function copyText(text) {
@@ -202,12 +211,14 @@
     }
 
     function copyRemaining() {
-        const b = batches[currentIdx];
-        const soldNums = b.customers.flatMap(c => c.nums.flat());
+        const currentBatch = batches[currentIdx];
+        const soldNums = currentBatch.customers.flatMap(c => c.nums.flat());
         let remaining = [];
-        for(let i=1; i<=b.total; i++) if(!soldNums.includes(i)) remaining.push(i);
+        for(let i=1; i<=currentBatch.total; i++) {
+            if(!soldNums.includes(i)) remaining.push(i);
+        }
         if(remaining.length === 0) return alert("已经全部卖完啦！");
-        copyText(`【${b.id}】剩余号码 [${remaining.length}个]：\n${remaining.join(', ')}`);
+        copyText(`【${currentBatch.id}】剩余号码 [${remaining.length}个]：\n${remaining.join(', ')}`);
     }
 
     function copyCustomerNums(cIdx) {
@@ -275,14 +286,18 @@
         renderGrid();
         renderCustomers();
         const msg = document.getElementById('statusMsg');
-        msg.style.display = selectedNums.length > 0 ? 'block' : 'none';
-        msg.innerHTML = `🎯 已选中 [ ${selectedNums.join(', ')} ]，点选下方人名绑定`;
+        if(selectedNums.length > 0) {
+            msg.style.display = 'block';
+            msg.innerHTML = `🎯 已选中 [ ${selectedNums.join(', ')} ]，点选下方人名绑定`;
+        } else {
+            msg.style.display = 'none';
+        }
     }
 
     function renderTabs() {
         const list = document.getElementById('batchTabsList');
         list.innerHTML = batches.map((b, i) => `
-            <div class="tab ${i === currentIdx ? 'active' : ''}" onclick="handleTabClick(${i})">${b.id}</div>
+            <div class="tab ${i === currentIdx ? 'active' : ''}" onclick="switchBatch(${i})">${b.id}</div>
         `).join('');
     }
 
@@ -292,12 +307,16 @@
         const soldNums = batches[currentIdx].customers.flatMap(c => c.nums.flat());
         grid.innerHTML = '';
         for(let i=1; i<=total; i++) {
+            const div = document.createElement('div');
             const isSold = soldNums.includes(i);
             const isSelected = selectedNums.includes(i);
-            const div = document.createElement('div');
             div.className = `num-card ${isSold ? 'sold' : ''} ${isSelected ? 'selected' : ''}`;
             div.innerText = i;
-            div.onclick = isSold ? (e) => showOwnerTip(e, i) : () => selectNumber(i);
+            if(!isSold) {
+                div.onclick = () => selectNumber(i);
+            } else {
+                div.onclick = (e) => showOwnerTip(e, i);
+            }
             grid.appendChild(div);
         }
     }
@@ -321,11 +340,13 @@
                 if(bIdx < c.nums.length - 1) tagsHtml += `<span class="batch-sep">|</span>`;
             });
 
+            const totalCount = c.nums.flat().length;
+
             card.innerHTML = `
                 <div class="cust-header">
                     <div class="cust-info">
                         <span class="cust-name">👤 ${c.name}</span>
-                        <span class="cust-count">${c.nums.flat().length} 张</span>
+                        <span class="cust-count">${totalCount} 张</span>
                         <span class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</span>
                     </div>
                     <span style="color:#b09c9c; font-size:11px;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
