@@ -31,21 +31,23 @@
             box-shadow: 0 4px 15px rgba(90,90,90,0.05); 
             margin-bottom: 12px;
             flex-shrink: 0;
-            position: relative;
             z-index: 10;
         }
-        .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+        .flex-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
         
         .batch-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 8px; white-space: nowrap; align-items: center; }
         .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; transition: 0.2s; }
         .tab.active { background: var(--m-blue-main); color: white; border-color: #8da1b0; font-weight: bold; }
         .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; flex-shrink: 0; }
 
+        /* 修复按钮大小的关键 CSS */
+        .fixed-btn { width: 85px; flex-shrink: 0; white-space: nowrap; }
+
         .button-group { 
             display: flex; gap: 10px; width: 100%; justify-content: space-between; 
             border-top: 1px solid #f0edeb; padding-top: 10px;
         }
-        .button-group button { flex: 1; padding: 8px; font-size: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .button-group button { flex: 1; padding: 10px; font-size: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
 
         .pool-box { 
             background: white; padding: 18px; border-radius: 15px; 
@@ -68,16 +70,28 @@
         .num-card.selected { background: var(--m-yellow-act); border-color: #d1bf96; color: #7c6d4d; transform: scale(1.05); }
         .num-card.sold { background: #e9e7e4; border-color: #d8d3cd; color: #b0adb0; text-decoration: line-through; opacity: 0.7; }
 
-        /* 核心改进：拥有者提示框置顶 */
+        /* 置顶弹窗美化：磨砂玻璃效果 */
         .global-owner-tip {
             position: fixed;
-            background: rgba(0,0,0,0.85); color: white; padding: 8px 16px; border-radius: 8px;
-            font-size: 13px; font-weight: bold; pointer-events: none; z-index: 99999; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            animation: tipPop 0.2s ease-out;
-            transform: translate(-50%, -120%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--m-blue-main);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 99999; 
+            box-shadow: 0 8px 25px rgba(156, 177, 192, 0.25);
+            border: 1px solid rgba(156, 177, 192, 0.2);
+            animation: tipPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translate(-50%, -130%);
         }
-        @keyframes tipPop { from { opacity: 0; transform: translate(-50%, -100%); } to { opacity: 1; transform: translate(-50%, -120%); } }
+        @keyframes tipPop { 
+            from { opacity: 0; transform: translate(-50%, -100%) scale(0.9); } 
+            to { opacity: 1; transform: translate(-50%, -130%) scale(1); } 
+        }
 
         .customer-card { 
             background: #ffffff; border: 1.5px solid var(--m-border); border-radius: 12px; 
@@ -92,7 +106,7 @@
         .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; }
         input { padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: #fffcf9; }
         button.btn-green { background: var(--m-green-main); color: white; border: none; }
-        .clear-search-btn { background: #eeece8; color: #b09c9c; padding: 8px 12px; font-size: 12px; border-radius: 8px; font-weight: bold; border: none; }
+        .clear-search-btn { background: #eeece8; color: #888; font-size: 12px; border-radius: 8px; border: none; height: 38px; }
 
         #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid #d1bf96; }
         .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 20px; font-style: italic; }
@@ -109,11 +123,11 @@
         <span>范围: 1 到</span>
         <input type="number" id="totalNum" value="50" style="width: 55px;" onchange="updateBatchTotal()">
         <input type="text" id="custInput" placeholder="输入顾客名字" style="flex: 1;">
-        <button class="btn-green" onclick="addCustomer()">添加顾客</button>
+        <button class="btn-green fixed-btn" onclick="addCustomer()">添加顾客</button>
     </div>
     <div class="flex-row">
         <input type="text" id="searchBar" placeholder="🔍快速过滤顾客..." style="flex: 1;" oninput="renderCustomers()">
-        <button class="clear-search-btn" onclick="clearFilter()">清空</button>
+        <button class="clear-search-btn fixed-btn" onclick="clearFilter()">清空</button>
     </div>
     <div class="button-group">
         <button style="background:transparent; border:1px solid var(--m-blue-main); color:var(--m-blue-main);" onclick="resetSoldStatus()">重置本档数字</button>
@@ -125,7 +139,7 @@
 
 <div class="main-container">
     <div class="pool-box">
-        <h4 style="margin:0; color:#8a8a8a; display:flex; justify-content:space-between;">
+        <h4 style="margin:0; color:#8a8a8a; display:flex; justify-content:space-between; align-items:center;">
             <span>🔢 数字表</span>
             <span class="copy-btn" onclick="copyRemaining()">复制剩余号码</span>
         </h4>
@@ -149,11 +163,10 @@
 
     function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
 
-    // 重点：再次点击当前档位弹出删除确认
     function handleTabClick(idx) {
         if (currentIdx === idx) {
             if (batches.length <= 1) return alert("至少保留一个档位哦！");
-            if (confirm(`确定要删除当前的【${batches[idx].id}】档位吗？数据将无法恢复！`)) {
+            if (confirm(`确定要删除当前的【${batches[idx].id}】档位吗？`)) {
                 batches.splice(idx, 1);
                 currentIdx = 0;
                 renderAll();
@@ -195,11 +208,11 @@
 
         const tip = document.createElement('div');
         tip.className = 'global-owner-tip';
-        tip.innerText = `拥有者: ${owner.name}`;
+        tip.innerHTML = `👤 拥有者: <span style="color:#7c6d4d">${owner.name}</span>`;
         
         const rect = event.target.getBoundingClientRect();
         tip.style.left = (rect.left + rect.width / 2) + 'px';
-        tip.style.top = rect.top + 'px'; // 这里使用了fixed定位配合top/left
+        tip.style.top = rect.top + 'px';
         
         document.body.appendChild(tip);
         
@@ -221,6 +234,12 @@
         let rem = [];
         for(let i=1; i<=b.total; i++) if(!sold.includes(i)) rem.push(i);
         copyText(`【${b.id}】余号[${rem.length}]:\n${rem.join(', ')}`);
+    }
+
+    function copyCustomerNums(cIdx) {
+        const c = batches[currentIdx].customers[cIdx];
+        const res = c.nums.map(batch => batch.join(' ')).join(' | ');
+        copyText(`${c.name}的成绩单\n${res}`);
     }
 
     function initSystem() { if(confirm("确定清空所有档位数据吗？")) { batches = [{ id: '默认档', customers: [], total: 50 }]; currentIdx = 0; renderAll(); save(); } }
@@ -259,7 +278,7 @@
         }
     }
 
-    function deleteCustomer(idx) { if(confirm(`彻底删除顾客 ${batches[currentIdx].customers[idx].name}？`)) { batches[currentIdx].customers.splice(idx, 1); renderAll(); save(); } }
+    function deleteCustomer(idx) { if(confirm(`徹底删除顾客 ${batches[currentIdx].customers[idx].name}？`)) { batches[currentIdx].customers.splice(idx, 1); renderAll(); save(); } }
 
     function renderAll() {
         document.getElementById('totalNum').value = batches[currentIdx].total;
