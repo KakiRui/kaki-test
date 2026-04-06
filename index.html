@@ -30,7 +30,7 @@
             margin-bottom: 12px;
         }
 
-        /* 重点：锁死布局，防止按钮被挤小 */
+        /* 锁死布局，防止按钮被挤小 */
         .input-row { 
             display: grid; 
             grid-template-columns: auto 60px 1fr 85px; 
@@ -103,7 +103,6 @@
         .btn-action { background: var(--m-green-main) !important; color: white !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         .btn-clear { background: #eeece8 !important; color: #888 !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         
-        /* 复制按钮样式 */
         .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; margin-left: 5px; }
 
         #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid #d1bf96; }
@@ -232,11 +231,11 @@
         copyText(`【${b.id}】余号[${rem.length}]:\n${rem.join(', ')}`);
     }
 
-    // 补回来的成绩单复制函数
+    // 更新后的复制文案逻辑
     function copyCustomerNums(cIdx) {
         const c = batches[currentIdx].customers[cIdx];
         const res = c.nums.map(batch => batch.join(' ')).join(' | ');
-        copyText(`${c.name}的成绩单\n${res}`);
+        copyText(`${c.name}的成绩单(  •̀ω•́  )ｷﾘｯ\n${res}`);
     }
 
     function addCustomer() {
