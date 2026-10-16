@@ -95,18 +95,53 @@
 
         .customer-card { background: #ffffff; border: 1.5px solid var(--m-border); border-radius: 12px; padding: 15px; margin-bottom: 12px; }
         .customer-card.can-receive { border-color: var(--m-green-main); background: var(--m-green-rec); }
-        .cust-header { display: flex; justify-content: space-between; align-items: center; }
+        .cust-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .cust-title { min-width: 0; overflow-wrap: anywhere; }
         .tag-box { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
         .tag { background: var(--m-blue-main); color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; }
         
         input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: #fffcf9; }
+        textarea { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 13px; background: #fffcf9; line-height: 1.45; }
         .btn-action { background: var(--m-green-main) !important; color: white !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         .btn-clear { background: #eeece8 !important; color: #888 !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         
-        .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; margin-left: 5px; }
+        .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; margin-left: 5px; white-space: nowrap; }
+        .sort-btn { font-size: 11px; background: #f4f7f4; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: var(--m-green-main); border: 1px solid #d6ddd4; margin-left: 5px; white-space: nowrap; }
 
         #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid #d1bf96; }
         .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 20px; font-style: italic; }
+
+        .list-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .list-header-title { margin: 0; color: #8a8a8a; }
+        .list-header-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+
+        .ai-panel { background: #faf8f6; border: 1px solid #e6e0d8; border-radius: 12px; padding: 14px; margin-bottom: 15px; }
+        .ai-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .ai-label { font-size: 12px; color: #8a8a8a; margin-bottom: 5px; display: block; }
+        .ai-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .ai-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+        .ai-note { font-size: 11px; color: #a5a0a0; line-height: 1.4; }
+        .ai-upload { border: 1.5px dashed var(--m-blue-main); background: white; border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; color: var(--m-blue-main); font-size: 13px; font-weight: bold; }
+        .ai-image-list { display: flex; gap: 8px; overflow-x: auto; margin-top: 10px; }
+        .ai-image-item { position: relative; flex-shrink: 0; }
+        .ai-image-item img { height: 70px; width: auto; max-width: 130px; object-fit: cover; border-radius: 8px; border: 1px solid var(--m-border); display: block; }
+        .ai-image-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: white; font-size: 10px; line-height: 18px; padding: 0; cursor: pointer; }
+        .ai-status { min-height: 18px; font-size: 12px; color: #7c6d4d; background: #f4efe7; border-radius: 8px; padding: 8px; margin-top: 8px; display: none; }
+        .ai-status.show { display: block; }
+        .ai-preview { margin-top: 10px; }
+        .ai-preview-card { background: white; border: 1px solid var(--m-border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+        .ai-preview-head { font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+        .ai-badge { font-size: 10px; font-weight: normal; padding: 2px 6px; border-radius: 8px; background: #eeece8; color: #888; }
+        .ai-badge.exists { background: #e7eee7; color: #6f7f6a; }
+        .ai-num-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+        .ai-num { background: var(--m-green-rec); color: #6f7f6a; border-radius: 6px; padding: 2px 7px; font-size: 12px; }
+        .ai-num.warn { background: #f2e7e7; color: #8f6f6f; }
+        .ai-hide { display: none; }
+
+        @media (max-width: 420px) {
+            .ai-row { grid-template-columns: 1fr; }
+            .list-header { align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
@@ -148,7 +183,50 @@
 </div>
 
 <div style="background:white; padding:18px; border-radius:15px; box-shadow:0 4px 12px rgba(90,90,90,0.03); margin-top:12px;">
-    <h4 style="margin:0 0 15px 0; color:#8a8a8a;">👥 顾客清单</h4>
+    <div class="list-header">
+        <h4 class="list-header-title">👥 顾客清单</h4>
+        <div class="list-header-actions">
+            <button class="sort-btn" onclick="sortAllCustomerNums()">🔢 一键按编号排序</button>
+            <button class="copy-btn" onclick="toggleAiPanel()">🤖 AI导入</button>
+        </div>
+    </div>
+
+    <div id="aiPanel" class="ai-panel" style="display:none;">
+        <div class="ai-grid">
+            <div>
+                <label class="ai-label">接口地址（支持 OpenAI 兼容接口 /chat/completions）</label>
+                <input type="text" id="aiEndpoint" placeholder="例如：https://api.openai.com/v1/chat/completions">
+            </div>
+            <div class="ai-row">
+                <div>
+                    <label class="ai-label">可识图模型名称</label>
+                    <input type="text" id="aiModel" placeholder="例如：gpt-4o-mini / 具体模型名">
+                </div>
+                <div>
+                    <label class="ai-label">API Key（只保存在本机）</label>
+                    <input type="password" id="aiKey" placeholder="sk-...">
+                </div>
+            </div>
+            <div>
+                <label class="ai-label">识别提示词</label>
+                <textarea id="aiPrompt" rows="6"></textarea>
+            </div>
+            <div class="ai-upload" onclick="document.getElementById('aiImageInput').click()">
+                📷 上传 / 拖入聊天记录截图；也可以在这里直接 Ctrl+V 粘贴截图
+                <div class="ai-note">支持多张截图，会逐张识图。</div>
+            </div>
+            <input type="file" id="aiImageInput" class="ai-hide" accept="image/*" multiple onchange="addAiImageFiles(this.files)">
+            <div id="aiImageList" class="ai-image-list"></div>
+            <div class="ai-note">导入位置：<b id="aiTargetBatch">当前档位</b>。默认会自动跳过已占用编号；结果会先预览，不会直接写入。</div>
+            <div class="ai-actions">
+                <button class="btn-action" onclick="runAiImport()">🧠 开始识图</button>
+                <button class="btn-clear" onclick="clearAiPreview()">清空预览</button>
+            </div>
+            <div id="aiStatus" class="ai-status"></div>
+            <div id="aiPreview" class="ai-preview"></div>
+        </div>
+    </div>
+
     <div id="customerList"></div>
     <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
 </div>
@@ -157,8 +235,29 @@
     let batches = JSON.parse(localStorage.getItem('kaki_v2_data')) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
     let selectedNums = [];
+    let aiImages = [];
+    let aiResults = [];
+
+    const defaultAiPrompt = `你是图片信息提取助手。请仔细识别聊天记录截图中顾客选择的买断图片编号，并提取顾客名字。
+要求：
+1. 只提取顾客明确选择的图片编号，忽略价格、表情、系统消息和其他无关内容。
+2. 同一个顾客的所有编号合并到同一个 numbers 数组。
+3. 只保留 1 到 {total} 之间的整数；不要猜测、补全或修改没有明确出现的编号。
+4. 如果图片中没有有效购买记录，返回 {"customers":[]}。
+5. 只输出 JSON，不要输出 Markdown、解释或其他文字。格式如下：
+{"customers":[{"name":"顾客名字","numbers":[2,4,7,10]}]}`;
+
+    let aiCfg = JSON.parse(localStorage.getItem('kaki_ai_cfg') || '{}');
+    if(!aiCfg.prompt) aiCfg.prompt = defaultAiPrompt;
 
     function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
+    function saveAiCfg() {
+        aiCfg.endpoint = document.getElementById('aiEndpoint').value.trim();
+        aiCfg.model = document.getElementById('aiModel').value.trim();
+        aiCfg.key = document.getElementById('aiKey').value.trim();
+        aiCfg.prompt = document.getElementById('aiPrompt').value;
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+    }
 
     function handleTabClick(idx) {
         if (currentIdx === idx) {
@@ -193,6 +292,7 @@
     function updateBatchTotal() {
         batches[currentIdx].total = parseInt(document.getElementById('totalNum').value) || 50;
         renderGrid();
+        renderAiPreview();
         save();
     }
 
@@ -231,7 +331,6 @@
         copyText(`【${b.id}】余号[${rem.length}]:\n${rem.join(', ')}`);
     }
 
-    // 更新后的复制文案逻辑
     function copyCustomerNums(cIdx) {
         const c = batches[currentIdx].customers[cIdx];
         const res = c.nums.map(batch => batch.join(' ')).join(' | ');
@@ -271,6 +370,26 @@
         }
     }
 
+    function sortCustomerNums(cIdx) {
+        const c = batches[currentIdx].customers[cIdx];
+        if(!c.nums.length) return;
+        c.nums = [c.nums.flat().sort((a, b) => a - b)];
+        renderAll();
+        save();
+    }
+
+    function sortAllCustomerNums() {
+        const count = batches[currentIdx].customers.length;
+        if(!count) return alert("当前档位还没有顾客数据。");
+        if(confirm(`将当前档位【${batches[currentIdx].id}】中所有顾客的编号统一按从小到大排序整理吗？`)) {
+            batches[currentIdx].customers.forEach(c => {
+                if(c.nums.length) c.nums = [c.nums.flat().sort((a, b) => a - b)];
+            });
+            renderAll();
+            save();
+        }
+    }
+
     function deleteCustomer(idx) { if(confirm(`彻底删除顾客 ${batches[currentIdx].customers[idx].name}？`)) { batches[currentIdx].customers.splice(idx, 1); renderAll(); save(); } }
 
     function initSystem() { if(confirm("警告：这将清空所有档位的所有数据！")) { batches = [{ id: '默认档', customers: [], total: 50 }]; currentIdx = 0; renderAll(); save(); } }
@@ -282,6 +401,7 @@
         tabs.innerHTML = batches.map((b, i) => `<div class="tab ${i === currentIdx ? 'active' : ''}" onclick="handleTabClick(${i})">${b.id}</div>`).join('');
         renderGrid();
         renderCustomers();
+        document.getElementById('aiTargetBatch').innerText = batches[currentIdx].id;
         const msg = document.getElementById('statusMsg');
         msg.style.display = selectedNums.length > 0 ? 'block' : 'none';
         msg.innerText = `🎯 已选中 [ ${selectedNums.join(',')} ]，点人名绑定`;
@@ -317,18 +437,279 @@
 
             card.innerHTML = `
                 <div class="cust-header">
-                    <div>
+                    <div class="cust-title">
                         <span style="font-weight:bold;">👤 ${c.name}</span>
                         <span style="font-size:11px; background:var(--m-yellow-act); padding:1px 6px; border-radius:10px; margin-left:5px;">${c.nums.flat().length}张</span>
                         <button class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</button>
+                        <button class="sort-btn" onclick="event.stopPropagation(); sortCustomerNums(${cIdx})">排序</button>
                     </div>
-                    <span style="color:#ccc; font-size:11px;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
+                    <span style="color:#ccc; font-size:11px; flex-shrink:0;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
                 </div>
                 <div class="tag-box">${tags || '<small style="color:#ccc">点击绑定...</small>'}</div>
             `;
             list.appendChild(card);
         });
     }
+
+    function toggleAiPanel() {
+        const panel = document.getElementById('aiPanel');
+        const show = panel.style.display === 'none';
+        panel.style.display = show ? 'block' : 'none';
+        if(show) renderAiConfig();
+    }
+
+    function renderAiConfig() {
+        document.getElementById('aiEndpoint').value = aiCfg.endpoint || '';
+        document.getElementById('aiModel').value = aiCfg.model || '';
+        document.getElementById('aiKey').value = aiCfg.key || '';
+        document.getElementById('aiPrompt').value = aiCfg.prompt || defaultAiPrompt;
+        renderAiImages();
+        renderAiPreview();
+    }
+
+    function setAiStatus(text, show=true) {
+        const box = document.getElementById('aiStatus');
+        box.innerText = text;
+        box.className = 'ai-status' + (show ? ' show' : '');
+    }
+
+    function addAiImageFiles(files) {
+        const list = Array.from(files || []);
+        if(!list.length) return;
+        list.forEach(file => {
+            if(!file.type.startsWith('image/')) return;
+            const id = `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+            compressImage(file).then(dataUrl => {
+                aiImages.push({ id, name: file.name || '粘贴截图', dataUrl });
+                renderAiImages();
+            }).catch(() => alert('这张图片读取失败，请重新上传。'));
+        });
+        document.getElementById('aiImageInput').value = '';
+    }
+
+    function removeAiImage(id) {
+        aiImages = aiImages.filter(item => item.id !== id);
+        renderAiImages();
+    }
+
+    function renderAiImages() {
+        const box = document.getElementById('aiImageList');
+        box.innerHTML = aiImages.map(item => `
+            <div class="ai-image-item">
+                <img src="${item.dataUrl}" alt="${item.name}">
+                <button class="ai-image-remove" onclick="removeAiImage('${item.id}')">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function compressImage(file) {
+        const dataUrl = await readFileAsDataURL(file);
+        const img = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.src = dataUrl;
+        });
+        const maxSide = 2200;
+        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        if(scale === 1 && file.size < 1800 * 1024) return dataUrl;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.naturalWidth * scale);
+        canvas.height = Math.round(img.naturalHeight * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.92);
+    }
+
+    function normalizeEndpoint(url) {
+        let clean = (url || '').trim().replace(/\/+$/, '');
+        if(!clean) throw new Error('请填写接口地址。');
+        if(!/\/chat\/completions$/.test(clean)) clean += '/chat/completions';
+        return clean;
+    }
+
+    function buildPrompt() {
+        const total = batches[currentIdx].total;
+        return (document.getElementById('aiPrompt').value || defaultAiPrompt).replaceAll('{total}', String(total));
+    }
+
+    function parseAiJson(raw) {
+        let text = (raw || '').trim();
+        text = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+        const start = text.indexOf('{');
+        const end = text.lastIndexOf('}');
+        if(start >= 0 && end > start) text = text.slice(start, end + 1);
+        const data = JSON.parse(text);
+        if(Array.isArray(data)) return data.map(x => x).filter(Boolean);
+        return data.customers || [];
+    }
+
+    async function callAiForImage(dataUrl) {
+        const endpoint = normalizeEndpoint(document.getElementById('aiEndpoint').value);
+        const model = document.getElementById('aiModel').value.trim();
+        const key = document.getElementById('aiKey').value.trim();
+        if(!model) throw new Error('请填写模型名称。');
+
+        const headers = { 'Content-Type': 'application/json' };
+        if(key) headers.Authorization = `Bearer ${key}`;
+
+        const body = {
+            model,
+            temperature: 0,
+            messages: [{
+                role: 'user',
+                content: [
+                    { type: 'text', text: buildPrompt() },
+                    { type: 'image_url', image_url: { url: dataUrl } }
+                ]
+            }]
+        };
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(body)
+        });
+
+        const text = await response.text();
+        if(!response.ok) {
+            let msg = text;
+            try { msg = JSON.parse(text).error?.message || text; } catch(e) {}
+            throw new Error(`接口返回 ${response.status}：${msg}`);
+        }
+        let json;
+        try { json = JSON.parse(text); } catch(e) { throw new Error('接口返回内容不是有效 JSON。'); }
+        const content = json?.choices?.[0]?.message?.content;
+        if(!content) throw new Error('接口没有返回识图内容。');
+        const result = parseAiJson(content);
+        if(!Array.isArray(result)) throw new Error('识图结果格式不正确。');
+        return result;
+    }
+
+    async function runAiImport() {
+        try {
+            saveAiCfg();
+            if(!aiImages.length) throw new Error('请先上传或粘贴聊天记录截图。');
+            const endpoint = normalizeEndpoint(document.getElementById('aiEndpoint').value);
+            if(!document.getElementById('aiModel').value.trim()) throw new Error('请填写模型名称。');
+
+            aiResults = [];
+            renderAiPreview();
+            let all = [];
+            for(let i = 0; i < aiImages.length; i++) {
+                setAiStatus(`🧠 正在识别第 ${i + 1}/${aiImages.length} 张截图...`);
+                const customers = await callAiForImage(aiImages[i].dataUrl);
+                all = all.concat(customers);
+                aiResults = all;
+                renderAiPreview();
+            }
+            setAiStatus(`✅ 识别完成，共 ${all.length} 条顾客记录。请检查下方预览后点击导入。`);
+        } catch(err) {
+            setAiStatus(`❌ ${err.message}`);
+        }
+    }
+
+    function renderAiPreview() {
+        const box = document.getElementById('aiPreview');
+        if(!aiResults.length) { box.innerHTML = ''; return; }
+        const current = batches[currentIdx];
+        const sold = current.customers.flatMap(c => c.nums.flat());
+
+        box.innerHTML = aiResults.map((item, idx) => {
+            const name = item.name || `未识别顾客${idx + 1}`;
+            const nums = (item.numbers || []).filter(n => Number.isFinite(Number(n))).map(Number);
+            const exists = current.customers.some(c => c.name === name);
+            const chips = nums.map(n => {
+                const invalid = n < 1 || n > current.total;
+                const taken = sold.includes(n);
+                const warn = invalid || taken;
+                return `<span class="ai-num ${warn ? 'warn' : ''}">${n}${invalid ? ' 超范围' : ''}${taken ? ' 已占用' : ''}</span>`;
+            }).join('') || '<span class="ai-note">未识别到有效编号</span>';
+            return `
+                <div class="ai-preview-card">
+                    <div class="ai-preview-head"><span>👤 ${name}</span><span class="ai-badge ${exists ? 'exists' : ''}">${exists ? '已有顾客' : '新顾客'}</span></div>
+                    <div class="ai-num-list">${chips}</div>
+                </div>
+            `;
+        }).join('') + `
+            <div class="ai-actions">
+                <button class="btn-action" onclick="confirmImportAiResults()">✅ 确认导入</button>
+                <button class="btn-clear" onclick="clearAiPreview()">取消</button>
+            </div>
+        `;
+    }
+
+    function confirmImportAiResults() {
+        if(!aiResults.length) return;
+        let imported = 0, skipped = 0;
+        const total = batches[currentIdx].total;
+
+        aiResults.forEach(item => {
+            const name = (item.name || '').trim();
+            if(!name) { skipped++; return; }
+            let nums = [...new Set((item.numbers || []).map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= total))];
+
+            const existing = batches[currentIdx].customers.find(c => c.name === name);
+            if(existing) {
+                const owned = existing.nums.flat();
+                const fresh = nums.filter(n => !owned.includes(n));
+                if(fresh.length) {
+                    existing.nums.push(fresh.sort((a, b) => a - b));
+                    imported += fresh.length;
+                } else skipped++;
+            } else {
+                if(nums.length) {
+                    batches[currentIdx].customers.unshift({ name, nums: [nums.sort((a, b) => a - b)] });
+                    imported += nums.length;
+                } else skipped++;
+            }
+        });
+
+        aiResults = [];
+        renderAiImages();
+        renderAll();
+        save();
+        setAiStatus(`✅ 导入完成：新增绑定 ${imported} 个编号；跳过/重复 ${skipped} 条。`);
+    }
+
+    function clearAiPreview() {
+        aiResults = [];
+        renderAiPreview();
+        setAiStatus('', false);
+    }
+
+    // 粘贴截图支持
+    document.addEventListener('paste', function(event) {
+        const panel = document.getElementById('aiPanel');
+        if(panel.style.display === 'none' || !event.clipboardData?.files?.length) return;
+        const hasImage = Array.from(event.clipboardData.files).some(file => file.type.startsWith('image/'));
+        if(hasImage) {
+            event.preventDefault();
+            addAiImageFiles(event.clipboardData.files);
+        }
+    });
+
+    // 拖拽截图支持
+    document.addEventListener('dragover', function(event) {
+        const upload = event.target.closest('.ai-upload');
+        if(upload) event.preventDefault();
+    });
+    document.addEventListener('drop', function(event) {
+        const upload = event.target.closest('.ai-upload');
+        if(!upload || !event.dataTransfer?.files?.length) return;
+        event.preventDefault();
+        addAiImageFiles(event.dataTransfer.files);
+    });
+
     renderAll();
 </script>
 </body>
