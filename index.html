@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="cream">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>kaki记数表-测试</title>
     <style>
-        :root {
+        :root[data-theme="cream"] {
             --m-bg: #f5f3f0;
             --m-text: #5a5a5a;
             --m-border: #dcd7cf;
@@ -14,6 +14,91 @@
             --m-yellow-act: #e2d2ae;
             --m-green-rec: #dce0d9;
             --m-danger: #b09c9c;
+            --m-card: #ffffff;
+            --m-panel: #faf8f6;
+            --m-input: #fffcf9;
+            --m-chip: #eeece8;
+            --m-muted: #888888;
+            --m-soft: #a5a0a0;
+            --m-btn: #f0f0f0;
+            --m-sort: #f4f7f4;
+            --m-sort-border: #d6ddd4;
+            --m-sort-text: #6f7f6a;
+            --m-tip: rgba(255, 255, 255, 0.95);
+            --m-sold: #e9e7e4;
+            --m-sold-border: #d8d3cd;
+            --m-sold-text: #b0adb0;
+            --m-footer: #d1cdc8;
+            --m-status: #f4efe7;
+            --m-badge: #eeece8;
+            --m-warn-bg: #f2e7e7;
+            --m-warn-text: #8f6f6f;
+            --m-warn-border: #d8c3c3;
+            --m-divider: #f0edeb;
+            --m-tag-hover: #a3b3bd;
+            --m-upload-bg: #ffffff;
+            --m-mini: #f6f4f2;
+            --m-modal: #ffffff;
+            --m-shadow: rgba(90, 90, 90, 0.08);
+            --m-on-accent: #ffffff;
+            --m-remove-bg: rgba(0, 0, 0, 0.55);
+        }
+
+        :root[data-theme="dark"] {
+            --m-bg: #000000;
+            --m-text: #bdc7ce;
+            --m-border: #4a5156;
+            --m-blue-main: #79838b;
+            --m-green-main: #3f474c;
+            --m-yellow-act: #4a5156;
+            --m-green-rec: #24292e;
+            --m-danger: #bdc7ce;
+            --m-card: #24292e;
+            --m-panel: #24292e;
+            --m-input: #24292e;
+            --m-chip: #24292e;
+            --m-muted: #808a92;
+            --m-soft: #808a92;
+            --m-btn: #24292e;
+            --m-sort: #4a5156;
+            --m-sort-border: #808a92;
+            --m-sort-text: #bdc7ce;
+            --m-tip: rgba(36, 41, 46, 0.97);
+            --m-sold: #24292e;
+            --m-sold-border: #4a5156;
+            --m-sold-text: #808a92;
+            --m-footer: #808a92;
+            --m-status: #24292e;
+            --m-badge: #24292e;
+            --m-warn-bg: #40363a;
+            --m-warn-text: #d9c3c7;
+            --m-warn-border: #5c4b50;
+            --m-divider: #4a5156;
+            --m-tag-hover: #bdc7ce;
+            --m-upload-bg: #24292e;
+            --m-mini: #24292e;
+            --m-modal: #24292e;
+            --m-shadow: rgba(0, 0, 0, 0.50);
+            --m-on-accent: #bdc7ce;
+            --m-remove-bg: rgba(0, 0, 0, 0.55);
+        }
+
+        /* 暗黑模式：数字卡明暗对比加强 */
+        :root[data-theme="dark"] .num-card {
+            background: #1a2025;
+            border-color: #59636b;
+            color: #aeb8c0;
+        }
+        :root[data-theme="dark"] .num-card.selected {
+            background: #d7dee2;
+            border-color: #e8eef1;
+            color: #0b0f12;
+        }
+        :root[data-theme="dark"] .num-card.sold {
+            background: #151a1f;
+            border-color: #394046;
+            color: #5d666d;
+            opacity: 0.75;
         }
 
         body { 
@@ -23,14 +108,53 @@
             color: var(--m-text);
             min-height: 100vh;
         }
+
+        .theme-btn {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--m-card);
+            border: 1px solid var(--m-border);
+            color: var(--m-muted);
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 100001;
+            box-shadow: 0 3px 10px var(--m-shadow);
+        }
+
+        .theme-modal-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            display: none;
+            z-index: 100002;
+        }
+        .theme-modal-bg.show { display: flex; align-items: center; justify-content: center; }
+        .theme-modal {
+            background: var(--m-modal);
+            border: 1px solid var(--m-border);
+            border-radius: 14px;
+            padding: 18px;
+            width: 280px;
+            max-width: 90vw;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .theme-modal h4 { margin: 0 0 12px 0; color: var(--m-muted); font-size: 14px; }
+        .theme-option { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid var(--m-border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; background: var(--m-card); font-size: 13px; font-weight: bold; color: var(--m-text); }
+        .theme-option.active { border-color: var(--m-blue-main); background: var(--m-green-rec); }
+        .theme-option span { font-size: 11px; color: var(--m-soft); font-weight: normal; }
+        .theme-close { width: 100%; padding: 9px; border-radius: 8px; border: 1px solid var(--m-border); background: var(--m-chip); color: var(--m-muted); cursor: pointer; font-size: 12px; font-weight: bold; margin-top: 4px; }
         
         .toolbar { 
-            background: #ffffff; padding: 15px; border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(90,90,90,0.05); 
+            background: var(--m-card); padding: 15px; border-radius: 15px; 
+            box-shadow: 0 4px 15px var(--m-shadow); 
             margin-bottom: 12px;
         }
 
-        /* 锁死布局，防止按钮被挤小 */
         .input-row { 
             display: grid; 
             grid-template-columns: auto 60px 1fr 85px; 
@@ -38,40 +162,34 @@
             align-items: center; 
             margin-bottom: 10px;
         }
-        .search-row {
-            display: grid;
-            grid-template-columns: 1fr 85px;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
+        .search-row { display: grid; grid-template-columns: 1fr 85px; gap: 8px; margin-bottom: 10px; }
 
         .batch-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 10px; white-space: nowrap; }
-        .tab { padding: 6px 14px; background: #eeece8; border-radius: 20px; font-size: 13px; cursor: pointer; color: #888; border: 1px solid transparent; }
-        .tab.active { background: var(--m-blue-main); color: white; border-color: #8da1b0; font-weight: bold; }
-        .add-tab-btn { padding: 5px 12px; background: #fff; border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; flex-shrink: 0; }
+        .tab { padding: 6px 14px; background: var(--m-chip); border-radius: 20px; font-size: 13px; cursor: pointer; color: var(--m-muted); border: 1px solid transparent; }
+        .tab.active { background: var(--m-blue-main); color: var(--m-on-accent); border-color: var(--m-blue-main); font-weight: bold; }
+        .add-tab-btn { padding: 5px 12px; background: var(--m-card); border: 1.2px dashed var(--m-blue-main); color: var(--m-blue-main); border-radius: 20px; font-size: 12px; font-weight: bold; flex-shrink: 0; }
 
         .button-group { 
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-            border-top: 1px solid #f0edeb; padding-top: 10px;
+            border-top: 1px solid var(--m-divider); padding-top: 10px;
         }
-        .button-group button { padding: 10px; font-size: 12px; border-radius: 8px; border: 1px solid var(--m-border); background: none; color: var(--m-text); font-weight: bold; cursor: pointer; }
+        .button-group button { padding: 10px; font-size: 12px; border-radius: 8px; border: 1px solid var(--m-border); background: var(--m-chip); color: var(--m-text); font-weight: bold; cursor: pointer; }
 
-        .pool-box { background: white; padding: 18px; border-radius: 15px; box-shadow: 0 4px 12px rgba(90,90,90,0.03); }
+        .pool-box { background: var(--m-card); padding: 18px; border-radius: 15px; box-shadow: 0 4px 12px var(--m-shadow); }
         .scroll-area { max-height: 40vh; overflow-y: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 10px; }
         
         .num-card { 
             height: 48px; border: 1.5px solid var(--m-blue-main); color: var(--m-blue-main); 
             display: flex; align-items: center; justify-content: center; font-weight: bold;
-            border-radius: 8px; cursor: pointer; background: rgba(156, 177, 192, 0.05);
+            border-radius: 8px; cursor: pointer; background: var(--m-panel);
         }
-        .num-card.selected { background: var(--m-yellow-act); border-color: #d1bf96; color: #7c6d4d; }
-        .num-card.sold { background: #e9e7e4; border-color: #d8d3cd; color: #b0adb0; text-decoration: line-through; opacity: 0.7; }
+        .num-card.selected { background: var(--m-yellow-act); border-color: var(--m-yellow-act); color: var(--m-text); }
+        .num-card.sold { background: var(--m-sold); border-color: var(--m-sold-border); color: var(--m-sold-text); text-decoration: line-through; opacity: 0.9; }
 
-        /* 磨砂玻璃置顶弹窗 */
         .global-owner-tip {
             position: fixed;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--m-tip);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             color: var(--m-blue-main);
@@ -81,8 +199,8 @@
             font-weight: bold;
             pointer-events: none;
             z-index: 100000; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 1px solid rgba(156, 177, 192, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border: 1px solid var(--m-border);
             animation: tipFade 0.7s forwards; 
             transform: translate(-50%, -130%);
         }
@@ -93,60 +211,106 @@
             100% { opacity: 0; transform: translate(-50%, -140%); }
         }
 
-        .customer-card { background: #ffffff; border: 1.5px solid var(--m-border); border-radius: 12px; padding: 15px; margin-bottom: 12px; }
+        .customer-card { background: var(--m-card); border: 1.5px solid var(--m-border); border-radius: 12px; padding: 15px; margin-bottom: 12px; }
         .customer-card.can-receive { border-color: var(--m-green-main); background: var(--m-green-rec); }
         .cust-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .cust-title { min-width: 0; overflow-wrap: anywhere; }
         .tag-box { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-        .tag { background: var(--m-blue-main); color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; }
+        .tag { background: var(--m-blue-main); color: var(--m-on-accent); padding: 4px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        .tag:hover { background: var(--m-tag-hover); }
         
-        input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: #fffcf9; }
-        textarea { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 13px; background: #fffcf9; line-height: 1.45; }
-        .btn-action { background: var(--m-green-main) !important; color: white !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
-        .btn-clear { background: #eeece8 !important; color: #888 !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
+        input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: var(--m-input); color: var(--m-text); }
+        select { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 14px; background: var(--m-input); color: var(--m-text); }
+        textarea { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--m-border); border-radius: 8px; font-size: 13px; background: var(--m-input); color: var(--m-text); line-height: 1.45; }
+        .btn-action { background: var(--m-green-main) !important; color: var(--m-on-accent) !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
+        .btn-clear { background: var(--m-chip) !important; color: var(--m-muted) !important; border: none !important; height: 38px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         
-        .copy-btn { font-size: 11px; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: #888; border: 1px solid #ddd; margin-left: 5px; white-space: nowrap; }
-        .sort-btn { font-size: 11px; background: #f4f7f4; border-radius: 4px; padding: 2px 6px; cursor: pointer; color: var(--m-green-main); border: 1px solid #d6ddd4; margin-left: 5px; white-space: nowrap; }
+        .copy-btn { font-size: 11px; background: var(--m-btn); border-radius: 4px; padding: 2px 6px; cursor: pointer; color: var(--m-muted); border: 1px solid var(--m-border); margin-left: 5px; white-space: nowrap; }
+        .sort-btn { font-size: 11px; background: var(--m-sort); border-radius: 4px; padding: 2px 6px; cursor: pointer; color: var(--m-sort-text); border: 1px solid var(--m-sort-border); margin-left: 5px; white-space: nowrap; }
 
-        #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: #7c6d4d; font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid #d1bf96; }
-        .footer-credit { text-align: center; font-size: 10px; color: #d1cdc8; margin-top: 20px; font-style: italic; }
+        #statusMsg { background: var(--m-yellow-act); padding: 10px; border-radius: 8px; color: var(--m-text); font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid var(--m-border); }
+        .footer-credit { text-align: center; font-size: 10px; color: var(--m-footer); margin-top: 20px; font-style: italic; }
 
         .list-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
-        .list-header-title { margin: 0; color: #8a8a8a; }
+        .list-header-title { margin: 0; color: var(--m-muted); }
         .list-header-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
 
-        .ai-panel { background: #faf8f6; border: 1px solid #e6e0d8; border-radius: 12px; padding: 14px; margin-bottom: 15px; }
+        .ai-panel { background: var(--m-panel); border: 1px solid var(--m-border); border-radius: 12px; padding: 14px; margin-bottom: 15px; }
         .ai-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .ai-label { font-size: 12px; color: #8a8a8a; margin-bottom: 5px; display: block; }
+        .ai-label { font-size: 12px; color: var(--m-muted); margin-bottom: 5px; display: block; }
         .ai-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .ai-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
-        .ai-note { font-size: 11px; color: #a5a0a0; line-height: 1.4; }
-        .ai-upload { border: 1.5px dashed var(--m-blue-main); background: white; border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; color: var(--m-blue-main); font-size: 13px; font-weight: bold; }
+        .ai-note { font-size: 11px; color: var(--m-soft); line-height: 1.4; }
+
+        .api-toggle { padding: 9px 10px; border: 1px solid var(--m-border); background: var(--m-chip); color: var(--m-text); border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .api-config { border: 1px solid var(--m-border); background: var(--m-card); border-radius: 10px; padding: 12px; display: none; }
+        .api-config.show { display: block; }
+        .api-section-title { font-size: 12px; font-weight: bold; color: var(--m-muted); margin: 0 0 8px 0; }
+        .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .preset-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .mini-btn { padding: 8px; font-size: 11px; border-radius: 7px; border: 1px solid var(--m-border); background: var(--m-mini); color: var(--m-text); cursor: pointer; font-weight: bold; }
+
+        details.prompt-box { border: 1px solid var(--m-border); border-radius: 10px; background: var(--m-card); padding: 10px 12px; }
+        details.prompt-box summary { cursor: pointer; font-size: 12px; font-weight: bold; color: var(--m-text); }
+        details.prompt-box summary small { margin-left: 7px; font-size: 11px; color: var(--m-soft); font-weight: normal; }
+        details.prompt-box textarea { margin-top: 10px; }
+
+        .ai-upload { border: 1.5px dashed var(--m-blue-main); background: var(--m-upload-bg); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; color: var(--m-blue-main); font-size: 13px; font-weight: bold; }
         .ai-image-list { display: flex; gap: 8px; overflow-x: auto; margin-top: 10px; }
         .ai-image-item { position: relative; flex-shrink: 0; }
         .ai-image-item img { height: 70px; width: auto; max-width: 130px; object-fit: cover; border-radius: 8px; border: 1px solid var(--m-border); display: block; }
-        .ai-image-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: white; font-size: 10px; line-height: 18px; padding: 0; cursor: pointer; }
-        .ai-status { min-height: 18px; font-size: 12px; color: #7c6d4d; background: #f4efe7; border-radius: 8px; padding: 8px; margin-top: 8px; display: none; }
+        .ai-image-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; border: none; background: var(--m-remove-bg); color: var(--m-on-accent); font-size: 10px; line-height: 18px; padding: 0; cursor: pointer; }
+        .ai-status { min-height: 18px; font-size: 12px; color: var(--m-text); background: var(--m-status); border-radius: 8px; padding: 8px; margin-top: 8px; display: none; }
         .ai-status.show { display: block; }
         .ai-preview { margin-top: 10px; }
-        .ai-preview-card { background: white; border: 1px solid var(--m-border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+        .ai-preview-card { background: var(--m-card); border: 1px solid var(--m-border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
         .ai-preview-head { font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
-        .ai-badge { font-size: 10px; font-weight: normal; padding: 2px 6px; border-radius: 8px; background: #eeece8; color: #888; }
-        .ai-badge.exists { background: #e7eee7; color: #6f7f6a; }
+        .ai-badge { font-size: 10px; font-weight: normal; padding: 2px 6px; border-radius: 8px; background: var(--m-badge); color: var(--m-muted); }
         .ai-num-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-        .ai-num { background: var(--m-green-rec); color: #6f7f6a; border-radius: 6px; padding: 2px 7px; font-size: 12px; }
-        .ai-num.warn { background: #f2e7e7; color: #8f6f6f; }
+        .ai-num { background: var(--m-green-rec); color: var(--m-sort-text); border-radius: 6px; padding: 2px 7px; font-size: 12px; }
+        .ai-num.warn { background: var(--m-warn-bg); color: var(--m-warn-text); }
+        .model-picker {
+            margin-top: 8px;
+            max-height: 130px;
+            overflow-y: auto;
+            border: 1px solid var(--m-border);
+            border-radius: 8px;
+            background: var(--m-input);
+            display: none;
+        }
+        .model-picker.show { display: block; }
+        .model-picker-item {
+            padding: 8px 10px;
+            font-size: 12px;
+            color: var(--m-text);
+            border-bottom: 1px solid var(--m-border);
+            cursor: pointer;
+            line-height: 1.3;
+        }
+        .model-picker-item:hover { background: var(--m-chip); }
+        .model-picker-item.active { background: var(--m-green-rec); color: var(--m-text); font-weight: bold; }
         .ai-hide { display: none; }
 
         @media (max-width: 420px) {
-            .ai-row { grid-template-columns: 1fr; }
+            .ai-row, .preset-row { grid-template-columns: 1fr; }
             .list-header { align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
-<div class="toolbar">
+<button class="theme-btn" onclick="openThemeModal()" title="切换主题">🎨</button>
+
+<div id="themeModalBg" class="theme-modal-bg" onclick="closeThemeModal(event)">
+    <div class="theme-modal" onclick="event.stopPropagation()">
+        <h4>🎨 切换主题</h4>
+        <div class="theme-option" id="theme-cream" onclick="changeTheme('cream')">默认 <span>明亮柔和</span></div>
+        <div class="theme-option" id="theme-dark" onclick="changeTheme('dark')">暗黑模式 <span>灰蓝深色</span></div>
+        <button class="theme-close" onclick="closeThemeModal()">关闭</button>
+    </div>
+</div>
+
+<div class="toolbar" style="margin-top:46px;">
     <div class="batch-tabs">
         <button class="add-tab-btn" onclick="addNewBatch()">+ 新档位</button>
         <div id="batchTabsList" style="display:flex; gap:8px;"></div>
@@ -166,14 +330,14 @@
 
     <div class="button-group">
         <button onclick="resetSoldStatus()">重置本档数字</button>
-        <button style="color:var(--m-danger);" onclick="initSystem()">清空所有档位</button>
+        <button style="background:var(--m-warn-bg);border-color:var(--m-warn-border);color:var(--m-warn-text);" onclick="initSystem()">清空所有档位</button>
     </div>
 </div>
 
 <div id="statusMsg" style="display:none;"></div>
 
 <div class="pool-box">
-    <h4 style="margin:0; color:#8a8a8a; display:flex; justify-content:space-between; align-items:center;">
+    <h4 style="margin:0; color:var(--m-muted); display:flex; justify-content:space-between; align-items:center;">
         <span>🔢 数字表</span>
         <span class="copy-btn" onclick="copyRemaining()">复制剩余号码</span>
     </h4>
@@ -182,7 +346,7 @@
     </div>
 </div>
 
-<div style="background:white; padding:18px; border-radius:15px; box-shadow:0 4px 12px rgba(90,90,90,0.03); margin-top:12px;">
+<div style="background:var(--m-card); padding:18px; border-radius:15px; box-shadow:0 4px 12px var(--m-shadow); margin-top:12px;">
     <div class="list-header">
         <h4 class="list-header-title">👥 顾客清单</h4>
         <div class="list-header-actions">
@@ -193,33 +357,64 @@
 
     <div id="aiPanel" class="ai-panel" style="display:none;">
         <div class="ai-grid">
-            <div>
-                <label class="ai-label">接口地址（支持 OpenAI 兼容接口 /chat/completions）</label>
-                <input type="text" id="aiEndpoint" placeholder="例如：https://api.openai.com/v1/chat/completions">
-            </div>
-            <div class="ai-row">
-                <div>
-                    <label class="ai-label">可识图模型名称</label>
-                    <input type="text" id="aiModel" placeholder="例如：gpt-4o-mini / 具体模型名">
+            <button class="api-toggle" onclick="toggleApiConfig()">⚙️ API 接口设置 / 预设</button>
+
+            <div id="apiConfigPanel" class="api-config">
+                <p class="api-section-title">接口预设</p>
+                <div class="preset-row">
+                    <div>
+                        <label class="ai-label">选择已保存预设</label>
+                        <select id="aiPresetSelect" onchange="applySelectedPreset()"></select>
+                    </div>
+                    <div>
+                        <label class="ai-label">预设名称</label>
+                        <input type="text" id="aiPresetName" placeholder="例如：我的识图接口">
+                    </div>
                 </div>
-                <div>
-                    <label class="ai-label">API Key（只保存在本机）</label>
-                    <input type="password" id="aiKey" placeholder="sk-...">
+                <div class="preset-actions">
+                    <button class="mini-btn" onclick="saveCurrentPreset()">保存当前</button>
+                    <button class="mini-btn" onclick="deleteSelectedPreset()">删除预设</button>
+                    <button class="mini-btn" onclick="renderAiConfig()">刷新列表</button>
+                </div>
+
+                <p class="api-section-title">接口信息</p>
+                <div class="ai-grid">
+                    <div>
+                        <label class="ai-label">接口地址（支持 OpenAI 兼容接口）</label>
+                        <input type="text" id="aiEndpoint" placeholder="例如：https://api.openai.com/v1" oninput="saveAiCfg()">
+                    </div>
+                    <div>
+                        <label class="ai-label">API Key（只保存在本机）</label>
+                        <input type="password" id="aiKey" placeholder="sk-..." oninput="saveAiCfg()">
+                    </div>
+                    <div>
+                        <label class="ai-label">可识图模型名称</label>
+                        <input type="text" id="aiModel" placeholder="例如：gpt-4o-mini" oninput="saveAiCfg()">
+                        <div id="aiModelPicker" class="model-picker"></div>
+                    </div>
+                    <div class="ai-actions">
+                        <button class="mini-btn" onclick="fetchAiModels()">拉取模型</button>
+                        <button class="mini-btn" onclick="renderAiConfig()">刷新配置</button>
+                    </div>
+                    <div class="ai-note">拉取模型会调用接口的 /models 地址。拉取成功后，下方会显示可点击的模型列表；如果接口不支持，就手动填写模型名。</div>
                 </div>
             </div>
-            <div>
-                <label class="ai-label">识别提示词</label>
-                <textarea id="aiPrompt" rows="6"></textarea>
-            </div>
+
+            <details class="prompt-box">
+                <summary>🧾 识别提示词 <small>点击展开</small></summary>
+                <textarea id="aiPrompt" rows="8"></textarea>
+                <div class="ai-note">提示词里的 {total} 会自动替换成当前档位的数字范围。</div>
+            </details>
+
             <div class="ai-upload" onclick="document.getElementById('aiImageInput').click()">
-                📷 上传 / 拖入聊天记录截图；也可以在这里直接 Ctrl+V 粘贴截图
+                📷 上传 / 拖入聊天记录截图；也可以直接 Ctrl+V 粘贴截图
                 <div class="ai-note">支持多张截图，会逐张识图。</div>
             </div>
             <input type="file" id="aiImageInput" class="ai-hide" accept="image/*" multiple onchange="addAiImageFiles(this.files)">
             <div id="aiImageList" class="ai-image-list"></div>
-            <div class="ai-note">导入位置：<b id="aiTargetBatch">当前档位</b>。默认会自动跳过已占用编号；结果会先预览，不会直接写入。</div>
+            <div class="ai-note">导入位置：<b id="aiTargetBatch">当前档位</b>。会自动跳过已占用编号；结果先预览，不会直接写入。</div>
             <div class="ai-actions">
-                <button class="btn-action" onclick="runAiImport()">🧠 开始识图</button>
+                <button class="btn-action" onclick="runAiImport()">开始识图</button>
                 <button class="btn-clear" onclick="clearAiPreview()">清空预览</button>
             </div>
             <div id="aiStatus" class="ai-status"></div>
@@ -237,24 +432,48 @@
     let selectedNums = [];
     let aiImages = [];
     let aiResults = [];
+    let aiModels = [];
 
-    const defaultAiPrompt = `你是图片信息提取助手。请仔细识别聊天记录截图中顾客选择的买断图片编号，并提取顾客名字。
+    const defaultAiPrompt = `你是图片信息提取助手。请仔细识别聊天记录截图中每个用户发送的数字编号，并提取用户名字，忽略括号内的名字，那是好友备注。
 要求：
-1. 只提取顾客明确选择的图片编号，忽略价格、表情、系统消息和其他无关内容。
-2. 同一个顾客的所有编号合并到同一个 numbers 数组。
+1. 只提取用户明确选择的数字编号，忽略价格、表情、系统消息和其他无关内容。
+2. 同一个用户的所有编号合并到同一个 numbers 数组。
 3. 只保留 1 到 {total} 之间的整数；不要猜测、补全或修改没有明确出现的编号。
 4. 如果图片中没有有效购买记录，返回 {"customers":[]}。
 5. 只输出 JSON，不要输出 Markdown、解释或其他文字。格式如下：
-{"customers":[{"name":"顾客名字","numbers":[2,4,7,10]}]}`;
+{"customers":[{"name":"用户名字","numbers":[2,4,7,10]}]}`;
 
     let aiCfg = JSON.parse(localStorage.getItem('kaki_ai_cfg') || '{}');
-    if(!aiCfg.prompt) aiCfg.prompt = defaultAiPrompt;
+    if(!aiCfg.presets) aiCfg.presets = [];
+    if(!aiCfg.prompt || aiCfg.prompt.includes('买断图片编号')) aiCfg.prompt = defaultAiPrompt;
 
     function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
+
+    function openThemeModal() {
+        document.getElementById('themeModalBg').classList.add('show');
+        updateThemeOptions();
+    }
+    function closeThemeModal(event) {
+        if(event && event.type === 'click' && event.target?.id !== 'themeModalBg' && !event.target?.classList?.contains('theme-close')) return;
+        document.getElementById('themeModalBg').classList.remove('show');
+    }
+    function updateThemeOptions() {
+        const current = document.documentElement.dataset.theme;
+        document.getElementById('theme-cream').classList.toggle('active', current === 'cream');
+        document.getElementById('theme-dark').classList.toggle('active', current === 'dark');
+    }
+    function changeTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem('kaki_theme', theme);
+        updateThemeOptions();
+        closeThemeModal();
+    }
+    changeTheme(localStorage.getItem('kaki_theme') || 'cream');
+
     function saveAiCfg() {
         aiCfg.endpoint = document.getElementById('aiEndpoint').value.trim();
-        aiCfg.model = document.getElementById('aiModel').value.trim();
         aiCfg.key = document.getElementById('aiKey').value.trim();
+        aiCfg.model = document.getElementById('aiModel').value.trim();
         aiCfg.prompt = document.getElementById('aiPrompt').value;
         localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
     }
@@ -299,18 +518,14 @@
     function showOwnerTip(event, num) {
         const owner = batches[currentIdx].customers.find(c => c.nums.flat().includes(num));
         if(!owner) return;
-        
         const oldTip = document.querySelector('.global-owner-tip');
         if(oldTip) oldTip.remove();
-
         const tip = document.createElement('div');
         tip.className = 'global-owner-tip';
         tip.innerHTML = `拥有者: ${owner.name}`;
-        
         const rect = event.target.getBoundingClientRect();
         tip.style.left = (rect.left + rect.width / 2) + 'px';
         tip.style.top = rect.top + 'px';
-        
         document.body.appendChild(tip);
         setTimeout(() => { if(tip) tip.remove(); }, 700); 
     }
@@ -430,10 +645,9 @@
             const card = document.createElement('div');
             card.className = `customer-card ${selectedNums.length > 0 ? 'can-receive' : ''}`;
             if(selectedNums.length > 0) card.onclick = () => bindToCustomer(cIdx);
-            
             const tags = c.nums.map((batch, bIdx) => 
                 batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
-            ).join('<span style="color:#b09c9c;margin:0 5px;">|</span>');
+            ).join('<span style="color:var(--m-soft);margin:0 5px;">|</span>');
 
             card.innerHTML = `
                 <div class="cust-header">
@@ -443,9 +657,9 @@
                         <button class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</button>
                         <button class="sort-btn" onclick="event.stopPropagation(); sortCustomerNums(${cIdx})">排序</button>
                     </div>
-                    <span style="color:#ccc; font-size:11px; flex-shrink:0;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
+                    <span style="color:var(--m-soft); font-size:11px; flex-shrink:0;" onclick="event.stopPropagation(); deleteCustomer(${cIdx})">删除</span>
                 </div>
-                <div class="tag-box">${tags || '<small style="color:#ccc">点击绑定...</small>'}</div>
+                <div class="tag-box">${tags || '<small style="color:var(--m-soft)">点击绑定...</small>'}</div>
             `;
             list.appendChild(card);
         });
@@ -458,13 +672,68 @@
         if(show) renderAiConfig();
     }
 
+    function toggleApiConfig() {
+        document.getElementById('apiConfigPanel').classList.toggle('show');
+    }
+
+    function renderPresetSelect() {
+        const select = document.getElementById('aiPresetSelect');
+        select.innerHTML = '<option value="">— 未选择预设 —</option>' + aiCfg.presets.map((p, i) => `<option value="${i}">${p.name}</option>`).join('');
+    }
+
     function renderAiConfig() {
         document.getElementById('aiEndpoint').value = aiCfg.endpoint || '';
-        document.getElementById('aiModel').value = aiCfg.model || '';
         document.getElementById('aiKey').value = aiCfg.key || '';
+        document.getElementById('aiModel').value = aiCfg.model || '';
         document.getElementById('aiPrompt').value = aiCfg.prompt || defaultAiPrompt;
+        renderPresetSelect();
+        renderModelPicker();
         renderAiImages();
         renderAiPreview();
+    }
+
+    function saveCurrentPreset() {
+        saveAiCfg();
+        if(!aiCfg.endpoint) return alert('请先填写接口地址再保存预设。');
+        const nameInput = document.getElementById('aiPresetName');
+        let name = nameInput.value.trim();
+        if(!name) {
+            try { name = new URL(aiCfg.endpoint).hostname; } catch(e) { name = `预设${aiCfg.presets.length + 1}`; }
+        }
+        const existing = aiCfg.presets.findIndex(p => p.name === name);
+        const preset = { name, endpoint: aiCfg.endpoint, key: aiCfg.key, model: aiCfg.model };
+        if(existing >= 0) {
+            if(!confirm(`预设「${name}」已存在，要覆盖它吗？`)) return;
+            aiCfg.presets[existing] = preset;
+        } else aiCfg.presets.push(preset);
+        nameInput.value = '';
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+        renderPresetSelect();
+        document.getElementById('aiPresetSelect').value = String(aiCfg.presets.findIndex(p => p.name === name));
+        alert('预设已保存。');
+    }
+
+    function applySelectedPreset() {
+        const idx = document.getElementById('aiPresetSelect').value;
+        if(idx === '') return;
+        const preset = aiCfg.presets[Number(idx)];
+        if(!preset) return;
+        document.getElementById('aiEndpoint').value = preset.endpoint || '';
+        document.getElementById('aiKey').value = preset.key || '';
+        document.getElementById('aiModel').value = preset.model || '';
+        saveAiCfg();
+        setAiStatus(`✅ 已应用预设：${preset.name}`);
+    }
+
+    function deleteSelectedPreset() {
+        const idx = document.getElementById('aiPresetSelect').value;
+        if(idx === '') return alert('请先选择一个要删除的预设。');
+        const preset = aiCfg.presets[Number(idx)];
+        if(!preset || !confirm(`确定删除预设「${preset.name}」吗？`)) return;
+        aiCfg.presets.splice(Number(idx), 1);
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+        renderPresetSelect();
+        setAiStatus(`🗑️ 已删除预设：${preset.name}`);
     }
 
     function setAiStatus(text, show=true) {
@@ -537,9 +806,77 @@
         return clean;
     }
 
+    function getModelsUrl(url) {
+        let clean = (url || '').trim().replace(/\/+$/, '');
+        if(!clean) throw new Error('请先填写接口地址。');
+        if(clean.endsWith('/chat/completions')) clean = clean.slice(0, -'/chat/completions'.length);
+        return clean + '/models';
+    }
+
+    
+
     function buildPrompt() {
         const total = batches[currentIdx].total;
         return (document.getElementById('aiPrompt').value || defaultAiPrompt).replaceAll('{total}', String(total));
+    }
+
+    async function fetchAiModels() {
+        try {
+            saveAiCfg();
+            const url = getModelsUrl(document.getElementById('aiEndpoint').value);
+            const key = document.getElementById('aiKey').value.trim();
+            const headers = {};
+            if(key) headers.Authorization = `Bearer ${key}`;
+            setAiStatus('正在拉取可用模型...');
+            const response = await fetch(url, { headers });
+            const text = await response.text();
+            if(!response.ok) {
+                let msg = text;
+                try { msg = JSON.parse(text).error?.message || text; } catch(e) {}
+                throw new Error(`接口返回 ${response.status}：${msg}`);
+            }
+            const json = JSON.parse(text);
+            const models = (json.data || []).map(m => m.id).filter(Boolean).sort();
+            if(!models.length) throw new Error('接口没有返回可用模型列表。');
+            aiModels = models;
+            renderModelPicker();
+            const currentModel = document.getElementById('aiModel').value.trim();
+            if(!models.includes(currentModel)) {
+                document.getElementById('aiModel').value = models[0];
+                saveAiCfg();
+                renderModelPicker();
+            }
+            setAiStatus(`拉取成功，共 ${models.length} 个模型。请在下方模型列表里点击选择。`);
+        } catch(err) {
+            setAiStatus(`接口错误：${err.message}`);
+        }
+    }
+
+    function renderModelPicker() {
+        const picker = document.getElementById('aiModelPicker');
+        if(!aiModels.length) { picker.classList.remove('show'); return; }
+        const currentModel = document.getElementById('aiModel').value.trim();
+        picker.innerHTML = aiModels.map(m => `<div class="model-picker-item ${m === currentModel ? 'active' : ''}" onclick="selectAiModel('${m.replace(/'/g, "\\'")}')">${m}</div>`).join('');
+        picker.classList.add('show');
+
+        // 点击列表外时自动收起模型选择框
+        if(!window.__modelPickerOutsideBound) {
+            window.__modelPickerOutsideBound = true;
+            document.addEventListener('click', function(event) {
+                const picker = document.getElementById('aiModelPicker');
+                if(!picker) return;
+                if(!picker.contains(event.target) && event.target.id !== 'aiModel') {
+                    picker.classList.remove('show');
+                }
+            });
+        }
+    }
+
+    function selectAiModel(model) {
+        document.getElementById('aiModel').value = model;
+        saveAiCfg();
+        renderModelPicker();
+        document.getElementById('aiModelPicker').classList.remove('show');
     }
 
     function parseAiJson(raw) {
@@ -549,7 +886,7 @@
         const end = text.lastIndexOf('}');
         if(start >= 0 && end > start) text = text.slice(start, end + 1);
         const data = JSON.parse(text);
-        if(Array.isArray(data)) return data.map(x => x).filter(Boolean);
+        if(Array.isArray(data)) return data.filter(Boolean);
         return data.customers || [];
     }
 
@@ -599,8 +936,8 @@
         try {
             saveAiCfg();
             if(!aiImages.length) throw new Error('请先上传或粘贴聊天记录截图。');
-            const endpoint = normalizeEndpoint(document.getElementById('aiEndpoint').value);
-            if(!document.getElementById('aiModel').value.trim()) throw new Error('请填写模型名称。');
+            if(!document.getElementById('aiEndpoint').value.trim()) throw new Error('请先在 API 设置里填写接口地址。');
+            if(!document.getElementById('aiModel').value.trim()) throw new Error('请填写或拉取模型名称。');
 
             aiResults = [];
             renderAiPreview();
@@ -612,7 +949,7 @@
                 aiResults = all;
                 renderAiPreview();
             }
-            setAiStatus(`✅ 识别完成，共 ${all.length} 条顾客记录。请检查下方预览后点击导入。`);
+            setAiStatus(`✅ 识别完成，共 ${all.length} 条用户记录。请检查预览后点击导入。`);
         } catch(err) {
             setAiStatus(`❌ ${err.message}`);
         }
@@ -625,7 +962,7 @@
         const sold = current.customers.flatMap(c => c.nums.flat());
 
         box.innerHTML = aiResults.map((item, idx) => {
-            const name = item.name || `未识别顾客${idx + 1}`;
+            const name = item.name || `未识别用户${idx + 1}`;
             const nums = (item.numbers || []).filter(n => Number.isFinite(Number(n))).map(Number);
             const exists = current.customers.some(c => c.name === name);
             const chips = nums.map(n => {
@@ -636,7 +973,7 @@
             }).join('') || '<span class="ai-note">未识别到有效编号</span>';
             return `
                 <div class="ai-preview-card">
-                    <div class="ai-preview-head"><span>👤 ${name}</span><span class="ai-badge ${exists ? 'exists' : ''}">${exists ? '已有顾客' : '新顾客'}</span></div>
+                    <div class="ai-preview-head"><span>👤 ${name}</span><span class="ai-badge ${exists ? 'exists' : ''}">${exists ? '已有用户' : '新用户'}</span></div>
                     <div class="ai-num-list">${chips}</div>
                 </div>
             `;
@@ -687,7 +1024,6 @@
         setAiStatus('', false);
     }
 
-    // 粘贴截图支持
     document.addEventListener('paste', function(event) {
         const panel = document.getElementById('aiPanel');
         if(panel.style.display === 'none' || !event.clipboardData?.files?.length) return;
@@ -698,7 +1034,6 @@
         }
     });
 
-    // 拖拽截图支持
     document.addEventListener('dragover', function(event) {
         const upload = event.target.closest('.ai-upload');
         if(upload) event.preventDefault();
