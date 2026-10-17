@@ -54,8 +54,8 @@
             --m-green-rec: #24292e;
             --m-danger: #bdc7ce;
             --m-card: #24292e;
-            --m-panel: #24292e;
-            --m-input: #24292e;
+            --m-panel: #171c21;
+            --m-input: #1d2328;
             --m-chip: #24292e;
             --m-muted: #808a92;
             --m-soft: #808a92;
@@ -69,14 +69,14 @@
             --m-sold-text: #808a92;
             --m-footer: #808a92;
             --m-status: #24292e;
-            --m-badge: #24292e;
+            --m-badge: #394148;
             --m-warn-bg: #40363a;
             --m-warn-text: #d9c3c7;
             --m-warn-border: #5c4b50;
             --m-divider: #4a5156;
             --m-tag-hover: #bdc7ce;
-            --m-upload-bg: #24292e;
-            --m-mini: #24292e;
+            --m-upload-bg: #2a3137;
+            --m-mini: #31383f;
             --m-modal: #24292e;
             --m-shadow: rgba(0, 0, 0, 0.50);
             --m-on-accent: #bdc7ce;
@@ -143,6 +143,21 @@
             background: #40363a;
             color: #e0c9cd;
             border-color: #5c4b50;
+        }
+        :root[data-theme="dark"] .api-config,
+        :root[data-theme="dark"] details.prompt-box,
+        :root[data-theme="dark"] .ai-switch,
+        :root[data-theme="dark"] .ai-trace-box,
+        :root[data-theme="dark"] .ai-record-box,
+        :root[data-theme="dark"] .ai-preview-card {
+            background: #2a3137;
+            border-color: #46505a;
+        }
+        :root[data-theme="dark"] .api-toggle,
+        :root[data-theme="dark"] .mini-btn {
+            background: #31383f;
+            border-color: #4f5962;
+            color: #c0cad1;
         }
 
         body { 
