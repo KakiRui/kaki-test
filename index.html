@@ -107,15 +107,35 @@
             color: #aeb8c0 !important;
             border: 1px solid #4a5156 !important;
         }
+        :root[data-theme="dark"] .tab {
+            background: #262d34;
+            color: #a9b4bd;
+            border: 1px solid #49535c;
+        }
+        :root[data-theme="dark"] .add-tab-btn {
+            background: #181d22;
+            color: #93a0aa;
+            border-color: #55606a;
+        }
         :root[data-theme="dark"] .sort-btn {
-            background: #23282d;
-            color: #8b959d;
-            border: 1px solid #394046;
+            background: #12161a;
+            color: #626c74;
+            border: 1px solid #252b31;
         }
         :root[data-theme="dark"] .ai-status {
             background: #151a20;
             border: 1px solid #4a5156;
             color: #aeb8c0;
+        }
+        :root[data-theme="dark"] .ai-num {
+            background: #303941;
+            color: #d7e0e6;
+            border: 1px solid #59636b;
+        }
+        :root[data-theme="dark"] .ai-num.warn {
+            background: #40363a;
+            color: #e0c9cd;
+            border-color: #5c4b50;
         }
 
         body { 
@@ -232,6 +252,10 @@
         .customer-card.can-receive { border-color: var(--m-green-main); background: var(--m-green-rec); }
         .cust-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .cust-title { min-width: 0; overflow-wrap: anywhere; }
+        .cust-name-btn { display: inline; max-width: 100%; padding: 0; border: 0; background: none; color: var(--m-text); font: inherit; font-weight: bold; text-align: left; overflow-wrap: anywhere; cursor: text; }
+        .cust-name-btn:hover { color: var(--m-blue-main); text-decoration: underline dotted; text-underline-offset: 3px; }
+        .cust-name-input { display: inline-block; width: min(220px, 100%); padding: 4px 7px; font-size: 14px; font-weight: bold; vertical-align: middle; }
+        .cust-edit-hint { margin-left: 5px; color: var(--m-soft); font-size: 10px; font-weight: normal; }
         .tag-box { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
         .tag { background: var(--m-blue-main); color: var(--m-on-accent); padding: 4px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
         .tag:hover { background: var(--m-tag-hover); }
@@ -286,6 +310,21 @@
         .ai-num-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
         .ai-num { background: var(--m-green-rec); color: var(--m-sort-text); border-radius: 6px; padding: 2px 7px; font-size: 12px; }
         .ai-num.warn { background: var(--m-warn-bg); color: var(--m-warn-text); }
+        .ai-trace { margin-top: 10px; }
+        .ai-trace-box { background: var(--m-card); border: 1px solid var(--m-border); border-radius: 10px; padding: 8px 10px; }
+        .ai-trace-box summary { cursor: pointer; font-weight: bold; font-size: 12px; color: var(--m-text); }
+        .ai-trace-list { display: grid; gap: 5px; margin-top: 8px; }
+        .ai-trace-row { font-size: 11px; line-height: 1.45; color: var(--m-muted); padding-left: 14px; position: relative; }
+        .ai-trace-row::before { content: "·"; position: absolute; left: 3px; color: var(--m-soft); font-weight: bold; }
+        .ai-trace-row.ok { color: var(--m-text); }
+        .ai-trace-row.warn { color: var(--m-warn-text); }
+        .ai-name-btn { padding: 0; border: 0; background: none; color: var(--m-text); font: inherit; font-weight: bold; text-align: left; overflow-wrap: anywhere; cursor: text; }
+        .ai-name-btn:hover { color: var(--m-blue-main); text-decoration: underline dotted; text-underline-offset: 3px; }
+        .ai-result-name-input { display: inline-block; width: min(220px, 100%); padding: 4px 7px; font-size: 13px; font-weight: bold; }
+        .ai-switch { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border: 1px solid var(--m-border); border-radius: 10px; background: var(--m-card); color: var(--m-text); cursor: pointer; }
+        .ai-switch input { width: 16px; height: 16px; margin: 1px 0 0 0; flex-shrink: 0; accent-color: var(--m-blue-main); }
+        .ai-switch strong { display: block; font-size: 12px; }
+        .ai-switch small { display: block; margin-top: 3px; color: var(--m-soft); font-size: 10px; line-height: 1.4; }
         .model-picker {
             margin-top: 8px;
             max-height: 130px;
@@ -307,6 +346,22 @@
         .model-picker-item:hover { background: var(--m-chip); }
         .model-picker-item.active { background: var(--m-green-rec); color: var(--m-text); font-weight: bold; }
         .ai-hide { display: none; }
+        .ai-conflict-box { margin-top: 6px; background: var(--m-warn-bg); border: 1px solid var(--m-warn-border); border-radius: 10px; padding: 8px 10px; font-size: 12px; color: var(--m-warn-text); }
+        .ai-conflict-box summary { cursor: pointer; font-weight: bold; }
+        .ai-conflict-list { margin-top: 6px; display: grid; gap: 4px; }
+        .ai-conflict-row { font-size: 12px; line-height: 1.4; }
+        .ai-image-seq { position: absolute; top: 3px; left: 3px; background: rgba(20,24,28,.78); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 6px; z-index: 1; }
+        .ai-image-meta { margin-top: 3px; font-size: 9px; color: var(--m-soft); text-align: center; white-space: nowrap; }
+        .ai-image-meta.low-quality { color: var(--m-warn-text); font-weight: bold; }
+        .ai-image-move { display: flex; justify-content: center; gap: 3px; margin-top: 2px; }
+        .ai-image-move button { border: 1px solid var(--m-border); background: var(--m-chip); color: var(--m-muted); border-radius: 4px; font-size: 9px; line-height: 15px; height: 16px; padding: 0 5px; cursor: pointer; }
+        .ai-record-box { margin-top: 8px; background: var(--m-card); border: 1px solid var(--m-border); border-radius: 10px; padding: 8px 10px; font-size: 12px; }
+        .ai-record-box summary { cursor: pointer; font-weight: bold; color: var(--m-text); }
+        .ai-record-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
+        .ai-record-table th, .ai-record-table td { border-bottom: 1px solid var(--m-border); padding: 5px 3px; text-align: left; vertical-align: top; }
+        .ai-record-table th { color: var(--m-muted); font-weight: bold; }
+        .ai-record-status.accept { color: var(--m-green-main); }
+        .ai-record-status.conflict, .ai-record-status.duplicate { color: var(--m-warn-text); }
 
         @media (max-width: 420px) {
             .ai-row, .preset-row { grid-template-columns: 1fr; }
@@ -365,7 +420,7 @@
 
 <div style="background:var(--m-card); padding:18px; border-radius:15px; box-shadow:0 4px 12px var(--m-shadow); margin-top:12px;">
     <div class="list-header">
-        <h4 class="list-header-title">👥 顾客清单</h4>
+        <h4 class="list-header-title">👥 顾客清单 <small class="cust-edit-hint">点名字可改</small></h4>
         <div class="list-header-actions">
             <button class="sort-btn" onclick="sortAllCustomerNums()">🔢 一键按编号排序</button>
             <button class="copy-btn" onclick="toggleAiPanel()">🤖 AI导入</button>
@@ -423,18 +478,35 @@
                 <div class="ai-note">提示词里的 {total} 会自动替换成当前档位的数字范围。</div>
             </details>
 
+            <label class="ai-switch" for="aiStripRemarks">
+                <input type="checkbox" id="aiStripRemarks" checked onchange="updateStripRemarks(this.checked)">
+                <span>
+                    <strong>自动去除昵称里的括号备注</strong>
+                    <small>推荐开启。例如「Kaki（🍠全世界最爱我吧）」会自动变成「Kaki」；识别后仍可点击名字手动修改。</small>
+                </span>
+            </label>
+
+            <label class="ai-switch" for="aiBatchRequest">
+                <input type="checkbox" id="aiBatchRequest" onchange="updateAiBatchRequest(this.checked)">
+                <span>
+                    <strong>多图合并识别（实验）</strong>
+                    <small>把多张截图放进同一次接口请求，减少请求次数。图片本身的 token 计费通常不会减少，且准确率可能低于逐张识别，默认关闭。</small>
+                </span>
+            </label>
+
             <div class="ai-upload" onclick="document.getElementById('aiImageInput').click()">
                 📷 上传 / 拖入聊天记录截图；也可以直接 Ctrl+V 粘贴截图
-                <div class="ai-note">支持多张截图，会逐张识图。</div>
+                <div class="ai-note">按下面的 #1、#2、#3 顺序识图；可调整顺序。普通手机截图会原图直传；显示红色尺寸表示图片宽度偏小，昵称可能看不清，建议换清晰原图。</div>
             </div>
             <input type="file" id="aiImageInput" class="ai-hide" accept="image/*" multiple onchange="addAiImageFiles(this.files)">
             <div id="aiImageList" class="ai-image-list"></div>
-            <div class="ai-note">导入位置：<b id="aiTargetBatch">当前档位</b>。会自动跳过已占用编号；结果先预览，不会直接写入。</div>
+            <div class="ai-note">导入位置：<b id="aiTargetBatch">当前档位</b>。会自动跳过已占用编号；同一个编号被多人认领时，只算给聊天记录中时间更早的人。网页按“截图顺序 → 消息时间递增 → 截图内行号”排序，结果先预览，不会直接写入。</div>
             <div class="ai-actions">
                 <button class="btn-action" onclick="runAiImport()">开始识图</button>
                 <button class="btn-clear" onclick="clearAiPreview()">清空预览</button>
             </div>
             <div id="aiStatus" class="ai-status"></div>
+            <div id="aiTrace" class="ai-trace"></div>
             <div id="aiPreview" class="ai-preview"></div>
         </div>
     </div>
@@ -449,20 +521,36 @@
     let selectedNums = [];
     let aiImages = [];
     let aiResults = [];
+    let aiConflicts = [];
     let aiModels = [];
+    let aiRecords = [];
+    let aiTrace = [];
+    let editingCustomerIndex = null;
+    let editingAiResultIndex = null;
 
-    const defaultAiPrompt = `你是图片信息提取助手。请仔细识别聊天记录截图中每个用户发送的数字编号，并提取用户名字，忽略括号内的名字，那是好友备注。
-要求：
-1. 只提取用户明确选择的数字编号，忽略价格、表情、系统消息和其他无关内容。
-2. 同一个用户的所有编号合并到同一个 numbers 数组。
-3. 只保留 1 到 {total} 之间的整数；不要猜测、补全或修改没有明确出现的编号。
-4. 如果图片中没有有效购买记录，返回 {"customers":[]}。
-5. 只输出 JSON，不要输出 Markdown、解释或其他文字。格式如下：
-{"customers":[{"name":"用户名字","numbers":[2,4,7,10]}]}`;
+    const defaultAiPrompt = `【顺序提取 v6】
+你是聊天记录截图的信息提取助手。括号里的名字是好友备注，必须忽略；只使用用户自己在群里显示的昵称。
 
+你只处理【当前这一张截图】。不要按用户合并，不要做跨图累计；先读取每条消息右侧显示的时间，最后按网页要求输出。
+
+严格按以下步骤处理：
+1. 先从上到下扫描【整张截图里的所有用户消息行】，在内部建立行号：屏幕越靠上的消息，order 越小。每个用户发出的消息都算一行，即使这条消息没有编号；时间、日期栏、分隔线不算行。不要先按用户名归档或汇总。
+2. 只提取用户明确发送或选择的 1 到 {total} 的整数编号。价格、表情、系统消息、撤回提示和其他无关文字全部忽略。
+3. 只输出包含有效编号的消息，但 order 必须填写该消息在整张截图所有用户消息行中的绝对行号，不能只对含编号的消息重新从 1 编号。
+4. 同一条消息里有多个编号时，每个编号单独输出一条记录，但它们的 order 必须相同。
+5. 同一个用户重复发送同一个编号，也按出现顺序各输出一条，不要自行去重。
+6. messageTime 必须逐条照抄该消息右侧的可见时间；能看到日期时输出 YYYY-MM-DD HH:MM:SS，看不到日期时输出 HH:MM:SS，完全看不清时输出空字符串。不要凭空补日期。
+7. 昵称只保留括号外面的群昵称，半角括号 () 和全角括号（）里的内容都属于好友备注，必须删除。例如「Kaki（🍠全世界最爱我吧）」只输出「Kaki」，「ve (wen)」只输出「ve」。如果去掉括号后没有昵称，name 输出空字符串。
+8. 昵称必须逐字照抄括号外的文字；看不清时宁可输出空字符串，不要猜、不要翻译、不要缩写、不要补全。不要把编号归给没有发送它的人。
+9. 不要合并相似昵称，例如 Elysiam_ 与 Elysium_ 必须当作不同用户。
+10. 多个用户发送同一个编号时，全部保留，不要替程序删除或改写；程序会按 messageTime 递增、时间相同再按 order 判断谁更早。
+11. 输出前重新从上到下核对每个 order、messageTime、name、number，并确保 entries 严格按 order 从小到大排列。
+12. 只输出 JSON，不要 Markdown、解释或其他文字。格式：
+{"entries":[{"order":1,"messageTime":"2026-10-16 11:05:00","name":"用户名字","number":2},{"order":2,"messageTime":"2026-10-16 11:05:04","name":"另一个用户","number":4}]}`;
     let aiCfg = JSON.parse(localStorage.getItem('kaki_ai_cfg') || '{}');
     if(!aiCfg.presets) aiCfg.presets = [];
-    if(!aiCfg.prompt || aiCfg.prompt.includes('买断图片编号')) aiCfg.prompt = defaultAiPrompt;
+    const legacyAiPromptMarkers = ['【顺序提取 v3】', '【顺序提取 v4】', '【顺序提取 v5】', '买断图片编号', '请仔细识别聊天记录截图中顾客选择的买断图片编号', '请仔细识别聊天记录截图中每个用户发送的数字编号', '累计统计助手', '单图信息提取助手', '【已识别统计】'];
+    if(!aiCfg.prompt || legacyAiPromptMarkers.some(marker => aiCfg.prompt.includes(marker))) aiCfg.prompt = defaultAiPrompt;
 
     function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
 
@@ -492,7 +580,23 @@
         aiCfg.key = document.getElementById('aiKey').value.trim();
         aiCfg.model = document.getElementById('aiModel').value.trim();
         aiCfg.prompt = document.getElementById('aiPrompt').value;
+        aiCfg.stripNameRemarks = document.getElementById('aiStripRemarks').checked;
+        aiCfg.batchRequest = document.getElementById('aiBatchRequest').checked;
         localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+    }
+
+    function updateStripRemarks(enabled) {
+        aiCfg.stripNameRemarks = !!enabled;
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+        if(aiResults.length) setAiStatus('括号备注设置已保存，将从下一次识图开始生效。');
+    }
+
+    function updateAiBatchRequest(enabled) {
+        aiCfg.batchRequest = !!enabled;
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+        setAiStatus(enabled
+            ? '多图合并识别已开启：只减少接口请求次数，图片 token 计费通常不会减少。'
+            : '已切换为逐张识别，准确率优先。');
     }
 
     function handleTabClick(idx) {
@@ -507,6 +611,7 @@
         } else {
             currentIdx = idx;
             selectedNums = [];
+            editingCustomerIndex = null;
             renderAll();
         }
     }
@@ -539,7 +644,7 @@
         if(oldTip) oldTip.remove();
         const tip = document.createElement('div');
         tip.className = 'global-owner-tip';
-        tip.innerHTML = `拥有者: ${owner.name}`;
+        tip.textContent = `拥有者: ${owner.name}`;
         const rect = event.target.getBoundingClientRect();
         tip.style.left = (rect.left + rect.width / 2) + 'px';
         tip.style.top = rect.top + 'px';
@@ -576,6 +681,53 @@
         input.value = '';
         renderAll();
         save();
+    }
+
+    function startEditCustomerName(idx) {
+        if(!batches[currentIdx].customers[idx]) return;
+        editingCustomerIndex = idx;
+        renderCustomers();
+        requestAnimationFrame(() => {
+            const input = document.getElementById('customerNameEditor');
+            if(input) {
+                input.focus();
+                input.select();
+            }
+        });
+    }
+
+    function handleCustomerNameKey(event, idx) {
+        if(event.key === 'Enter') {
+            event.preventDefault();
+            event.currentTarget.blur();
+        } else if(event.key === 'Escape') {
+            event.preventDefault();
+            editingCustomerIndex = null;
+            renderCustomers();
+        }
+    }
+
+    function finishCustomerNameEdit(idx, commit) {
+        if(editingCustomerIndex !== idx) return;
+        const input = document.getElementById('customerNameEditor');
+        if(!input) {
+            editingCustomerIndex = null;
+            renderCustomers();
+            return;
+        }
+        if(commit) {
+            const name = cleanAiName(input.value);
+            if(!name) {
+                alert('用户名不能为空。');
+                editingCustomerIndex = null;
+                renderCustomers();
+                return;
+            }
+            batches[currentIdx].customers[idx].name = name;
+            save();
+        }
+        editingCustomerIndex = null;
+        renderCustomers();
     }
 
     function selectNumber(num) {
@@ -665,11 +817,14 @@
             const tags = c.nums.map((batch, bIdx) => 
                 batch.map(n => `<span class="tag" onclick="event.stopPropagation(); unbindNumber(${cIdx}, ${bIdx}, ${n})">${n}</span>`).join('')
             ).join('<span style="color:var(--m-soft);margin:0 5px;">|</span>');
+            const nameEditor = editingCustomerIndex === cIdx
+                ? `<input type="text" id="customerNameEditor" class="cust-name-input" maxlength="60" value="${escapeAiHtml(c.name)}" placeholder="输入用户名" onclick="event.stopPropagation()" onkeydown="handleCustomerNameKey(event, ${cIdx})" onblur="finishCustomerNameEdit(${cIdx}, true)">`
+                : `<button type="button" class="cust-name-btn" onclick="event.stopPropagation(); startEditCustomerName(${cIdx})" title="点击修改用户名">👤 ${escapeAiHtml(c.name)}</button>`;
 
             card.innerHTML = `
                 <div class="cust-header">
                     <div class="cust-title">
-                        <span style="font-weight:bold;">👤 ${c.name}</span>
+                        ${nameEditor}
                         <span style="font-size:11px; background:var(--m-yellow-act); padding:1px 6px; border-radius:10px; margin-left:5px;">${c.nums.flat().length}张</span>
                         <button class="copy-btn" onclick="event.stopPropagation(); copyCustomerNums(${cIdx})">复制成绩单</button>
                         <button class="sort-btn" onclick="event.stopPropagation(); sortCustomerNums(${cIdx})">排序</button>
@@ -703,6 +858,8 @@
         document.getElementById('aiKey').value = aiCfg.key || '';
         document.getElementById('aiModel').value = aiCfg.model || '';
         document.getElementById('aiPrompt').value = aiCfg.prompt || defaultAiPrompt;
+        document.getElementById('aiStripRemarks').checked = aiCfg.stripNameRemarks !== false;
+        document.getElementById('aiBatchRequest').checked = aiCfg.batchRequest === true;
         renderPresetSelect();
         renderModelPicker();
         renderAiImages();
@@ -759,17 +916,214 @@
         box.className = 'ai-status' + (show ? ' show' : '');
     }
 
+    async function runAiImport() {
+        try {
+            saveAiCfg();
+            if(!aiImages.length) throw new Error('请先上传或粘贴聊天记录截图。');
+            if(!document.getElementById('aiEndpoint').value.trim()) throw new Error('请先在 API 设置里填写接口地址。');
+            if(!document.getElementById('aiModel').value.trim()) throw new Error('请填写或拉取模型名称。');
+
+            const total = batches[currentIdx].total;
+            const occupiedBefore = new Set(batches[currentIdx].customers.flatMap(c => c.nums.flat())).size;
+            const rawEntries = [];
+            aiImages.sort((a, b) => a.seq - b.seq);
+            aiResults = [];
+            aiConflicts = [];
+            aiRecords = [];
+            aiTrace = [];
+            editingAiResultIndex = null;
+            renderAiTrace();
+            renderAiPreview();
+
+            const jobs = [];
+            for(let i = 0; i < aiImages.length; i++) {
+                const image = aiImages[i];
+                const sources = image.segmented && image.segments?.length
+                    ? image.segments.map((segment, index) => ({ dataUrl: segment.dataUrl, part: index + 1, parts: image.segments.length }))
+                    : [{ dataUrl: image.dataUrl, part: 1, parts: 1 }];
+                for(const source of sources) {
+                    jobs.push({
+                        dataUrl: source.dataUrl,
+                        imageIndex: i,
+                        part: source.part,
+                        partIndex: source.part - 1,
+                        partCount: source.parts
+                    });
+                }
+            }
+
+            const hasSegmentedImages = aiImages.some(image => image.segmented);
+            const useBatch = aiCfg.batchRequest === true && jobs.length > 1 && !hasSegmentedImages;
+            if(aiCfg.batchRequest === true && hasSegmentedImages) {
+                pushAiTrace('检测到长截图分段：为保证顺序，本次自动改回逐段识别。', 'warn');
+            }
+            pushAiTrace(`准备处理 ${aiImages.length} 张截图，共 ${jobs.length} 个识图片段；模式：${useBatch ? '多图合并请求' : '逐张请求'}。`);
+
+            const jobGroups = useBatch ? chunkArray(jobs, 4) : jobs.map(job => [job]);
+            let requestCount = 0;
+
+            for(let groupIndex = 0; groupIndex < jobGroups.length; groupIndex++) {
+                const group = jobGroups[groupIndex];
+                const firstJob = group[0];
+                const partText = group.length === 1 && firstJob.partCount > 1 ? `，分段 ${firstJob.part}/${firstJob.partCount}` : '';
+                const groupLabel = group.length > 1
+                    ? `第 ${groupIndex + 1}/${jobGroups.length} 组（${group.length} 张）`
+                    : `截图 #${firstJob.imageIndex + 1}${partText}`;
+                setAiStatus(`正在识别${groupLabel}...`);
+                pushAiTrace(`开始识别${groupLabel}。`);
+                const entries = await callAiForImages(
+                    group.map(job => ({ dataUrl: job.dataUrl })),
+                    group.length === 1 ? { partIndex: firstJob.partIndex, partCount: firstJob.partCount } : {}
+                );
+                requestCount++;
+                const groupRaw = [];
+                entries.forEach((entry, localIndex) => {
+                    let job = firstJob;
+                    if(group.length > 1) {
+                        if(!Number.isInteger(entry.aiImageIndex) || entry.aiImageIndex < 0 || entry.aiImageIndex >= group.length) {
+                            throw new Error('合并识图结果缺少正确的 image 字段，请关闭“多图合并识别”后重试。');
+                        }
+                        job = group[entry.aiImageIndex];
+                    }
+                    groupRaw.push({
+                        ...entry,
+                        imageIndex: job.imageIndex,
+                        partIndex: job.partIndex,
+                        localIndex
+                    });
+                });
+                rawEntries.push(...groupRaw);
+                const timeText = aiTimeRange(groupRaw);
+                pushAiTrace(`${groupLabel}：提取 ${groupRaw.length} 条编号记录，时间范围 ${timeText}。`, 'ok');
+            }
+
+            const entryOrder = entry => Number.isFinite(entry.order) ? entry.order : Number.MAX_SAFE_INTEGER;
+            const ordered = rawEntries
+                .map((entry, fallbackOrder) => ({ ...entry, fallbackOrder }))
+                .sort((a, b) => a.imageIndex - b.imageIndex
+                    || a.partIndex - b.partIndex
+                    || (Number.isFinite(a.timeSeconds) && Number.isFinite(b.timeSeconds) && a.timeSeconds !== b.timeSeconds
+                        ? a.timeSeconds - b.timeSeconds
+                        : entryOrder(a) - entryOrder(b))
+                    || a.fallbackOrder - b.fallbackOrder);
+
+            const timedCount = ordered.filter(entry => Number.isFinite(entry.timeSeconds)).length;
+            pushAiTrace(`排序完成：${timedCount}/${ordered.length} 条记录读取到时间。按截图顺序、分段顺序、消息时间递增排序；时间相同再按截图内行号。`, timedCount === ordered.length ? 'ok' : 'warn');
+
+            const claimOwner = new Map();
+            const claimInfo = new Map();
+            const nameOrder = [];
+            const nameNums = new Map();
+            const conflicts = [];
+            const conflictSeen = new Set();
+
+            const addClaim = (rawName, rawNum, record) => {
+                const name = aiDisplayName(rawName);
+                const n = Math.trunc(Number(rawNum));
+                const valid = !!name && Number.isFinite(n) && n >= 1 && n <= total;
+                const row = {
+                    id: `${record.imageIndex}_${record.partIndex}_${record.fallbackOrder}`,
+                    imageIndex: record.imageIndex,
+                    partIndex: record.partIndex,
+                    order: record.order,
+                    messageTime: record.messageTime,
+                    timeLabel: record.timeLabel,
+                    timeSeconds: record.timeSeconds,
+                    name,
+                    rawName: cleanAiName(rawName),
+                    number: Number.isFinite(n) ? n : null,
+                    rawNumber: rawNum,
+                    status: 'skip',
+                    winner: ''
+                };
+                aiRecords.push(row);
+                if(!valid) return;
+                const key = aiNameKey(name);
+                if(claimOwner.has(n)) {
+                    const winner = claimOwner.get(n);
+                    const winnerInfo = claimInfo.get(n) || { name: winner, existing: true };
+                    row.status = aiNameKey(winner) === key ? 'duplicate' : 'conflict';
+                    row.winner = winner;
+                    row.winnerSource = claimSourceLabel(winnerInfo);
+                    row.claimSource = claimSourceLabel(record);
+                    if(aiNameKey(winner) !== key) {
+                        const ck = key + '#' + n;
+                        if(!conflictSeen.has(ck)) {
+                            conflictSeen.add(ck);
+                            conflicts.push({
+                                number: n,
+                                name,
+                                winner,
+                                claimSource: claimSourceLabel(record),
+                                winnerSource: claimSourceLabel(winnerInfo)
+                            });
+                        }
+                    }
+                    return;
+                }
+                row.status = 'accept';
+                claimOwner.set(n, name);
+                claimInfo.set(n, {
+                    name,
+                    imageIndex: record.imageIndex,
+                    partIndex: record.partIndex,
+                    order: record.order,
+                    messageTime: record.messageTime,
+                    timeLabel: record.timeLabel,
+                    timeSeconds: record.timeSeconds,
+                    existing: false
+                });
+                if(!nameNums.has(key)) { nameNums.set(key, { name, numbers: new Set() }); nameOrder.push(key); }
+                nameNums.get(key).numbers.add(n);
+            };
+
+            batches[currentIdx].customers.forEach(c => c.nums.flat().forEach(n => {
+                if(claimOwner.has(n)) return;
+                claimOwner.set(n, c.name);
+                claimInfo.set(n, { name: c.name, existing: true });
+            }));
+
+            ordered.forEach(entry => addClaim(entry.name, entry.number, entry));
+            aiResults = nameOrder.map(key => {
+                const rec = nameNums.get(key);
+                return { name: rec.name, numbers: [...rec.numbers].sort((a,b) => a - b) };
+            });
+            aiConflicts = conflicts.slice();
+            pushAiTrace(`重复编号判定完成：${conflicts.length} 个编号存在多人重复，已按时间更早者优先；时间相同再按行号。`, conflicts.length ? 'warn' : 'ok');
+            pushAiTrace(`本次共调用接口 ${requestCount} 次，最终保留 ${aiResults.length} 位用户、${aiResults.reduce((sum, item) => sum + item.numbers.length, 0)} 个编号。`, 'ok');
+            renderAiPreview();
+
+            const count = aiResults.reduce((s, item) => s + item.numbers.length, 0);
+            if(!count) {
+                pushAiTrace('没有生成可新增的编号，请展开识别记录校对或检查当前档位是否已有数据。', 'warn');
+                setAiStatus(occupiedBefore
+                    ? `识别完成，但本次没有可新增的编号。当前档位原有 ${occupiedBefore} 个编号已优先保留；如果只是重复测试，请先点“重置本档数字”再识图。`
+                    : '识别完成，但没有提取到有效编号。请展开“识别记录校对”检查昵称与编号，或检查截图清晰度。');
+                return;
+            }
+            setAiStatus(`识别完成：${aiResults.length} 个用户、共 ${count} 个编号，已按消息时间递增整理。` + (aiConflicts.length ? `有 ${aiConflicts.length} 个编号被多人重复发送，已按时间更早者优先。` : '') + (occupiedBefore ? `当前档位原有 ${occupiedBefore} 个编号会继续优先保留；如果只是重复测试，请先点“重置本档数字”。` : '') + '请先展开校对表核对，再点击导入。');
+        } catch(err) {
+            pushAiTrace(`识别失败：${err.message}`, 'warn');
+            setAiStatus(`识别失败：${err.message}`);
+        }
+    }
+
     function addAiImageFiles(files) {
-        const list = Array.from(files || []);
+        const list = Array.from(files || []).filter(file => file.type.startsWith('image/'));
         if(!list.length) return;
-        list.forEach(file => {
-            if(!file.type.startsWith('image/')) return;
-            const id = `${Date.now()}_${Math.random().toString(36).slice(2)}`;
-            compressImage(file).then(dataUrl => {
-                aiImages.push({ id, name: file.name || '粘贴截图', dataUrl });
+        const firstSeq = aiImages.reduce((max, item) => Math.max(max, item.seq || 0), 0) + 1;
+        const jobs = list.map((file, index) => ({
+            file,
+            seq: firstSeq + index,
+            id: `${Date.now()}_${Math.random().toString(36).slice(2)}`
+        }));
+        Promise.all(jobs.map(job => compressImage(job.file).then(processed => ({ ...processed, id: job.id, seq: job.seq, name: job.file.name || '粘贴截图' }))))
+            .then(items => {
+                aiImages.push(...items);
+                aiImages.sort((a, b) => a.seq - b.seq);
                 renderAiImages();
-            }).catch(() => alert('这张图片读取失败，请重新上传。'));
-        });
+            })
+            .catch(() => alert('有图片读取失败，请重新上传。'));
         document.getElementById('aiImageInput').value = '';
     }
 
@@ -778,14 +1132,34 @@
         renderAiImages();
     }
 
+    function moveAiImage(id, delta) {
+        const index = aiImages.findIndex(item => item.id === id);
+        const target = index + delta;
+        if(index < 0 || target < 0 || target >= aiImages.length) return;
+        [aiImages[index], aiImages[target]] = [aiImages[target], aiImages[index]];
+        aiImages.forEach((item, i) => { item.seq = i + 1; });
+        renderAiImages();
+    }
+
     function renderAiImages() {
         const box = document.getElementById('aiImageList');
-        box.innerHTML = aiImages.map(item => `
+        box.innerHTML = aiImages.map((item, index) => {
+            const kb = item.size ? `${Math.round(item.size / 1024)} KB` : '';
+            const size = item.width && item.height ? `${item.width}×${item.height}` : '';
+            const quality = item.segmented ? `分段 ${item.segments?.length || 1}` : (item.reencoded ? '已缩放' : '原图');
+            const lowQuality = item.width && item.width < 600;
+            return `
             <div class="ai-image-item">
-                <img src="${item.dataUrl}" alt="${item.name}">
+                <span class="ai-image-seq">#${index + 1}</span>
+                <img src="${item.dataUrl}" alt="${item.name}" title="${item.name}">
                 <button class="ai-image-remove" onclick="removeAiImage('${item.id}')">✕</button>
-            </div>
-        `).join('');
+                <div class="ai-image-meta${lowQuality ? ' low-quality' : ''}" title="${lowQuality ? '图片宽度较小，昵称可能难以辨认，建议换清晰原图' : quality}">${[size, kb, quality].filter(Boolean).join(' · ')}${lowQuality ? ' · 建议换清晰原图' : ''}</div>
+                <div class="ai-image-move">
+                    <button onclick="moveAiImage('${item.id}', -1)" title="前移">‹</button>
+                    <button onclick="moveAiImage('${item.id}', 1)" title="后移">›</button>
+                </div>
+            </div>`;
+        }).join('');
     }
 
     function readFileAsDataURL(file) {
@@ -797,23 +1171,62 @@
         });
     }
 
-    async function compressImage(file) {
-        const dataUrl = await readFileAsDataURL(file);
-        const img = await new Promise((resolve, reject) => {
+    function loadImageFromDataUrl(dataUrl) {
+        return new Promise((resolve, reject) => {
             const image = new Image();
             image.onload = () => resolve(image);
             image.onerror = reject;
             image.src = dataUrl;
         });
-        const maxSide = 2200;
-        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
-        if(scale === 1 && file.size < 1800 * 1024) return dataUrl;
+    }
 
+    function canvasToJpeg(canvas, quality) {
+        return canvas.toDataURL('image/jpeg', quality);
+    }
+
+    function createImageSegment(img, sourceY, sourceHeight, targetWidth) {
+        const scale = targetWidth ? targetWidth / img.naturalWidth : 1;
         const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.naturalWidth * scale);
-        canvas.height = Math.round(img.naturalHeight * scale);
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        return canvas.toDataURL('image/jpeg', 0.92);
+        canvas.width = targetWidth || img.naturalWidth;
+        canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, sourceY, img.naturalWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
+        return canvas;
+    }
+
+    async function compressImage(file) {
+        const dataUrl = await readFileAsDataURL(file);
+        const img = await loadImageFromDataUrl(dataUrl);
+        const width = img.naturalWidth;
+        const height = img.naturalHeight;
+
+        // 普通截图不缩放、不二次转码；超过 1800px 的宽图才缩到 1800px。
+        // 很长的聊天截图不整张缩小，而是每 3000px 切成一段，避免字体被压成一团。
+        const normalMaxWidth = 1800;
+        const normalMaxHeight = 4000;
+        const segmentHeight = 3000;
+        if(height <= normalMaxHeight && width <= normalMaxWidth && file.size < 5 * 1024 * 1024) {
+            return { dataUrl, width, height, size: file.size, segmented: false, reencoded: false };
+        }
+        if(height <= segmentHeight) {
+            const targetWidth = width > normalMaxWidth ? normalMaxWidth : width;
+            const canvas = createImageSegment(img, 0, height, targetWidth);
+            const processed = canvasToJpeg(canvas, 0.92);
+            return { dataUrl: processed, width: canvas.width, height: canvas.height, size: Math.round(processed.length * 0.75), segmented: false, reencoded: true };
+        }
+        const segments = [];
+        const overlap = 160;
+        for(let y = 0; y < height; y += segmentHeight) {
+            const sourceBottom = Math.min(height, y + segmentHeight + (y + segmentHeight < height ? overlap : 0));
+            const sourceHeight = sourceBottom - y;
+            const canvas = createImageSegment(img, y, sourceHeight, width > normalMaxWidth ? normalMaxWidth : 0);
+            const processed = canvasToJpeg(canvas, 0.92);
+            segments.push({ dataUrl: processed, width: canvas.width, height: canvas.height });
+            if(sourceBottom >= height) break;
+        }
+        return { dataUrl, width, height, size: file.size, segmented: true, segments };
     }
 
     function normalizeEndpoint(url) {
@@ -896,35 +1309,194 @@
         document.getElementById('aiModelPicker').classList.remove('show');
     }
 
-    function parseAiJson(raw) {
-        let text = (raw || '').trim();
-        text = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-        const start = text.indexOf('{');
-        const end = text.lastIndexOf('}');
-        if(start >= 0 && end > start) text = text.slice(start, end + 1);
-        const data = JSON.parse(text);
-        if(Array.isArray(data)) return data.filter(Boolean);
-        return data.customers || [];
+    function escapeAiHtml(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
 
-    async function callAiForImage(dataUrl) {
+    function pushAiTrace(text, tone = '') {
+        aiTrace.push({ text, tone });
+        renderAiTrace();
+    }
+
+    function renderAiTrace() {
+        const box = document.getElementById('aiTrace');
+        if(!box) return;
+        if(!aiTrace.length) {
+            box.innerHTML = '';
+            return;
+        }
+        box.innerHTML = `
+            <details class="ai-trace-box" open>
+                <summary>识别过程记录（${aiTrace.length} 步）— 这是程序处理记录，不是模型内部思维链</summary>
+                <div class="ai-trace-list">
+                    ${aiTrace.map(item => `<div class="ai-trace-row ${escapeAiHtml(item.tone)}">${escapeAiHtml(item.text)}</div>`).join('')}
+                </div>
+            </details>
+        `;
+    }
+
+    function normalizeAiTime(value) {
+        const text = String(value == null ? '' : value).trim();
+        const timeMatch = text.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+        if(!timeMatch) return { label: '', seconds: NaN, hasDate: false, raw: text };
+
+        let hour = Number(timeMatch[1]);
+        const minute = Number(timeMatch[2]);
+        const second = Number(timeMatch[3] || 0);
+        if(hour > 23 || minute > 59 || second > 59) return { label: '', seconds: NaN, hasDate: false, raw: text };
+
+        const isPm = /오후|下午|晚上|\bpm\b/i.test(text);
+        const isAm = /오전|上午|早上|\bam\b/i.test(text);
+        if(isPm && hour < 12) hour += 12;
+        if(isAm && hour === 12) hour = 0;
+
+        const dateMatch = text.match(/(\d{4})\s*[-/.年]\s*(\d{1,2})\s*[-/.月]\s*(\d{1,2})\s*日?/);
+        const dateParts = dateMatch ? [Number(dateMatch[1]), Number(dateMatch[2]), Number(dateMatch[3])] : null;
+        const pad = n => String(n).padStart(2, '0');
+        const timeLabel = `${pad(hour)}:${pad(minute)}:${pad(second)}`;
+        if(dateParts && dateParts[1] >= 1 && dateParts[1] <= 12 && dateParts[2] >= 1 && dateParts[2] <= 31) {
+            const [year, month, day] = dateParts;
+            return {
+                label: `${year}-${pad(month)}-${pad(day)} ${timeLabel}`,
+                seconds: Date.UTC(year, month - 1, day, hour, minute, second),
+                hasDate: true,
+                raw: text
+            };
+        }
+        return {
+            label: timeLabel,
+            seconds: hour * 3600 + minute * 60 + second,
+            hasDate: false,
+            raw: text
+        };
+    }
+
+    function aiTimeRange(entries) {
+        const valid = entries.filter(entry => Number.isFinite(entry.timeSeconds));
+        if(!valid.length) return '未读到时间';
+        valid.sort((a, b) => a.timeSeconds - b.timeSeconds);
+        const first = valid[0].timeLabel || valid[0].messageTime || '—';
+        const last = valid[valid.length - 1].timeLabel || valid[valid.length - 1].messageTime || '—';
+        return first === last ? first : `${first} → ${last}`;
+    }
+
+    function cleanAiName(value) {
+        return String(value == null ? '' : value).replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+    }
+
+    function stripNameRemarks(value) {
+        let name = cleanAiName(value);
+        let previous = '';
+        while(name !== previous) {
+            previous = name;
+            name = name.replace(/[（(][^（）()]*[）)]/g, '');
+        }
+        return name.replace(/\s{2,}/g, ' ').trim();
+    }
+
+    function aiDisplayName(value) {
+        const name = cleanAiName(value);
+        return aiCfg.stripNameRemarks === false ? name : stripNameRemarks(name);
+    }
+
+    function claimSourceLabel(info) {
+        if(!info) return '顺序未知';
+        if(info.existing) return '当前档已有记录';
+        const image = Number.isInteger(info.imageIndex) ? `截图 #${info.imageIndex + 1}` : '截图';
+        const part = Number.isInteger(info.partIndex) && info.partIndex > 0 ? `第 ${info.partIndex + 1} 段` : '';
+        const time = info.timeLabel || info.messageTime || '';
+        const order = Number.isFinite(info.order) ? `第 ${info.order} 行` : '行号未识别';
+        return [image, part, time, order].filter(Boolean).join(' · ');
+    }
+
+    function aiNameKey(value) {
+        const cleaned = cleanAiName(value).replace(/[（(][^（）()]*[）)]/g, '').replace(/\s+/g, '');
+        return (cleaned || cleanAiName(value)).toLowerCase();
+    }
+
+    function parseAiJson(raw) {
+        let text = (raw || '').trim();
+        text = text.replace(/^```(?:json)?/i, '').replace(/```\s*$/, '').trim();
+        let data = null;
+        try {
+            data = JSON.parse(text);
+        } catch(e) {
+            const starts = [text.indexOf('{'), text.indexOf('[')].filter(i => i >= 0);
+            const start = starts.length ? Math.min(...starts) : -1;
+            const end = Math.max(text.lastIndexOf('}'), text.lastIndexOf(']'));
+            if(!Number.isFinite(start) || start < 0 || end <= start) throw new Error('识图结果里没有找到 JSON 内容。');
+            data = JSON.parse(text.slice(start, end + 1));
+        }
+        const list = Array.isArray(data) ? data : [data.entries, data.customers, data.data, data.results].find(Array.isArray) || [data];
+        const entries = [];
+        const toNumber = value => {
+            if(typeof value === 'number') return value;
+            if(typeof value === 'string') { const m = value.match(/\d+/); return m ? Number(m[0]) : NaN; }
+            return NaN;
+        };
+        const toOrder = value => {
+            const n = Number(value);
+            return Number.isFinite(n) && n > 0 ? n : NaN;
+        };
+        list.forEach(item => {
+            if(!item) return;
+            const name = String(item.name || item.user || item.userName || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const order = toOrder(item.order ?? item.seq ?? item.position);
+            const messageTime = String(item.messageTime ?? item.datetime ?? item.timestamp ?? item.time ?? '').trim();
+            const parsedTime = normalizeAiTime(messageTime);
+            const rawImageIndex = Number(item.image ?? item.imageIndex ?? item.screenshot ?? item.imageNo ?? NaN);
+            const aiImageIndex = Number.isFinite(rawImageIndex) && rawImageIndex > 0 ? Math.trunc(rawImageIndex) - 1 : NaN;
+            const nums = Array.isArray(item.numbers) ? item.numbers
+                : (Array.isArray(item.num) ? item.num
+                : (item.num !== undefined && item.num !== null ? [item.num] : []));
+            const addEntry = number => entries.push({
+                order,
+                name,
+                number,
+                messageTime,
+                timeLabel: parsedTime.label,
+                timeSeconds: parsedTime.seconds,
+                timeHasDate: parsedTime.hasDate,
+                aiImageIndex
+            });
+            nums.forEach(v => addEntry(toNumber(v)));
+            if(item.number !== undefined && item.number !== null) addEntry(toNumber(item.number));
+        });
+        return entries.map((entry, index) => ({ ...entry, localIndex: index }));
+    }
+
+    function chunkArray(items, size) {
+        const chunks = [];
+        for(let i = 0; i < items.length; i += size) chunks.push(items.slice(i, i + size));
+        return chunks;
+    }
+
+    async function callAiForImages(sources, context = {}) {
         const endpoint = normalizeEndpoint(document.getElementById('aiEndpoint').value);
         const model = document.getElementById('aiModel').value.trim();
         const key = document.getElementById('aiKey').value.trim();
         if(!model) throw new Error('请填写模型名称。');
+        if(!sources.length) throw new Error('没有可识别的图片。');
 
         const headers = { 'Content-Type': 'application/json' };
         if(key) headers.Authorization = `Bearer ${key}`;
 
+        let prompt = buildPrompt();
+        if(sources.length > 1) {
+            prompt += `\n\n【本次请求包含 ${sources.length} 张图片】\n按它们在请求中出现的顺序编号为 image=1、2、3……。每一条 entry 必须增加 image 字段，填写该编号所属的图片序号。不同图片要独立处理，不要跨图片合并用户名或编号。`;
+        }
+        if(context.partCount > 1) {
+            prompt += `\n\n【当前是同一张长截图的第 ${context.partIndex + 1}/${context.partCount} 段】\n请只识别这一段里的发言。order 仍然从本段最上方第一条有效发言开始，按 1、2、3 依次编号；不要猜测上一段或下一段的内容。`;
+        }
+
+        const requestContent = [{ type: 'text', text: prompt }];
+        sources.forEach(source => requestContent.push({ type: 'image_url', image_url: { url: source.dataUrl } }));
         const body = {
             model,
             temperature: 0,
             messages: [{
                 role: 'user',
-                content: [
-                    { type: 'text', text: buildPrompt() },
-                    { type: 'image_url', image_url: { url: dataUrl } }
-                ]
+                content: requestContent
             }]
         };
 
@@ -949,57 +1521,113 @@
         return result;
     }
 
-    async function runAiImport() {
-        try {
-            saveAiCfg();
-            if(!aiImages.length) throw new Error('请先上传或粘贴聊天记录截图。');
-            if(!document.getElementById('aiEndpoint').value.trim()) throw new Error('请先在 API 设置里填写接口地址。');
-            if(!document.getElementById('aiModel').value.trim()) throw new Error('请填写或拉取模型名称。');
-
-            aiResults = [];
-            renderAiPreview();
-            let all = [];
-            for(let i = 0; i < aiImages.length; i++) {
-                setAiStatus(`🧠 正在识别第 ${i + 1}/${aiImages.length} 张截图...`);
-                const customers = await callAiForImage(aiImages[i].dataUrl);
-                all = all.concat(customers);
-                aiResults = all;
-                renderAiPreview();
+    function startEditAiResultName(idx) {
+        if(!aiResults[idx]) return;
+        editingAiResultIndex = idx;
+        renderAiPreview();
+        requestAnimationFrame(() => {
+            const input = document.getElementById('aiResultNameEditor');
+            if(input) {
+                input.focus();
+                input.select();
             }
-            setAiStatus(`✅ 识别完成，共 ${all.length} 条用户记录。请检查预览后点击导入。`);
-        } catch(err) {
-            setAiStatus(`❌ ${err.message}`);
+        });
+    }
+
+    function handleAiResultNameKey(event, idx) {
+        if(event.key === 'Enter') {
+            event.preventDefault();
+            event.currentTarget.blur();
+        } else if(event.key === 'Escape') {
+            event.preventDefault();
+            editingAiResultIndex = null;
+            renderAiPreview();
         }
+    }
+
+    function finishAiResultNameEdit(idx, commit) {
+        if(editingAiResultIndex !== idx) return;
+        const input = document.getElementById('aiResultNameEditor');
+        if(!input) {
+            editingAiResultIndex = null;
+            renderAiPreview();
+            return;
+        }
+        if(commit) {
+            const name = cleanAiName(input.value);
+            if(!name) {
+                alert('用户名不能为空。');
+                editingAiResultIndex = null;
+                renderAiPreview();
+                return;
+            }
+            aiResults[idx].name = name;
+        }
+        editingAiResultIndex = null;
+        renderAiPreview();
     }
 
     function renderAiPreview() {
         const box = document.getElementById('aiPreview');
-        if(!aiResults.length) { box.innerHTML = ''; return; }
+        if(!aiResults.length && !aiConflicts.length && !aiRecords.length) { box.innerHTML = ''; return; }
         const current = batches[currentIdx];
         const sold = current.customers.flatMap(c => c.nums.flat());
 
-        box.innerHTML = aiResults.map((item, idx) => {
-            const name = item.name || `未识别用户${idx + 1}`;
-            const nums = (item.numbers || []).filter(n => Number.isFinite(Number(n))).map(Number);
-            const exists = current.customers.some(c => c.name === name);
-            const chips = nums.map(n => {
-                const invalid = n < 1 || n > current.total;
+        const cards = aiResults.map((item, index) => {
+            const name = escapeAiHtml(item.name || '未识别用户');
+            const exists = current.customers.some(c => aiNameKey(c.name) === aiNameKey(item.name));
+            const chips = item.numbers.map(n => {
                 const taken = sold.includes(n);
-                const warn = invalid || taken;
-                return `<span class="ai-num ${warn ? 'warn' : ''}">${n}${invalid ? ' 超范围' : ''}${taken ? ' 已占用' : ''}</span>`;
-            }).join('') || '<span class="ai-note">未识别到有效编号</span>';
+                return `<span class="ai-num${taken ? ' warn' : ''}">${n}${taken ? ' 已占用' : ''}</span>`;
+            }).join('') || '<span class="ai-note">无有效编号</span>';
+            const nameEditor = editingAiResultIndex === index
+                ? `<input type="text" id="aiResultNameEditor" class="ai-result-name-input" maxlength="60" value="${escapeAiHtml(item.name)}" placeholder="输入用户名" onkeydown="handleAiResultNameKey(event, ${index})" onblur="finishAiResultNameEdit(${index}, true)">`
+                : `<button type="button" class="ai-name-btn" onclick="startEditAiResultName(${index})" title="点击修改用户名">${name}</button>`;
             return `
                 <div class="ai-preview-card">
-                    <div class="ai-preview-head"><span>👤 ${name}</span><span class="ai-badge ${exists ? 'exists' : ''}">${exists ? '已有用户' : '新用户'}</span></div>
+                    <div class="ai-preview-head">${nameEditor}<span class="ai-badge${exists ? ' exists' : ''}">${exists ? '已有用户' : '新用户'}</span></div>
                     <div class="ai-num-list">${chips}</div>
                 </div>
             `;
-        }).join('') + `
+        }).join('');
+
+        const conflictBox = aiConflicts.length ? `
+            <details class="ai-conflict-box">
+                <summary>${aiConflicts.length} 个编号被重复认领，已按消息时间递增排序并保留最早记录，点击查看</summary>
+                <div class="ai-conflict-list">
+                    ${aiConflicts.map(c => `<div class="ai-conflict-row">${c.number} 号：${escapeAiHtml(c.name)}（${escapeAiHtml(c.claimSource)}）与 ${escapeAiHtml(c.winner)}（${escapeAiHtml(c.winnerSource)}）重复，已算给 ${escapeAiHtml(c.winner)}</div>`).join('')}
+                </div>
+            </details>
+        ` : '';
+
+        const statusText = { accept: '采用', conflict: '冲突，已忽略', duplicate: '同人重复，已忽略', skip: '无效或已占用' };
+        const recordRows = aiRecords.map(record => {
+            const image = aiImages[record.imageIndex];
+            const imageLabel = `#${record.imageIndex + 1}${image?.segmented ? ` · 段${record.partIndex + 1}` : ''}`;
+            const name = record.name ? escapeAiHtml(record.name) : '<span class="ai-record-status skip">空昵称</span>';
+            const number = record.number === null ? escapeAiHtml(record.rawNumber) : record.number;
+            const winner = record.winner ? `（${escapeAiHtml(record.winner)}${record.winnerSource ? ` · ${escapeAiHtml(record.winnerSource)}` : ''}）` : '';
+            const time = record.timeLabel || escapeAiHtml(record.messageTime) || '—';
+            return `<tr><td>${imageLabel}</td><td>${time}</td><td>${Number.isFinite(record.order) ? record.order : '—'}</td><td>${name}</td><td>${number}</td><td class="ai-record-status ${record.status}">${statusText[record.status]}${winner}</td></tr>`;
+        }).join('');
+        const recordBox = aiRecords.length ? `
+            <details class="ai-record-box">
+                <summary>识别记录校对（${aiRecords.length} 条）— 顺序有疑问时展开检查</summary>
+                <div class="ai-note" style="margin-top:5px;">排序依据：先按截图 #1 → #2 → #3，再按每张截图内读取到的消息时间递增；时间相同或读不到时间时，再按从上到下的绝对行号。昵称识别错时，可以直接点击上方预览里的用户名修改。</div>
+                <div style="overflow-x:auto;"><table class="ai-record-table">
+                    <thead><tr><th>截图</th><th>消息时间</th><th>行号</th><th>昵称</th><th>编号</th><th>结果</th></tr></thead>
+                    <tbody>${recordRows}</tbody>
+                </table></div>
+            </details>
+        ` : '';
+
+        const actions = aiResults.length ? `
             <div class="ai-actions">
-                <button class="btn-action" onclick="confirmImportAiResults()">✅ 确认导入</button>
+                <button class="btn-action" onclick="confirmImportAiResults()">确认导入</button>
                 <button class="btn-clear" onclick="clearAiPreview()">取消</button>
             </div>
-        `;
+        ` : '';
+        box.innerHTML = (cards || '<div class="ai-note">没有可导入的编号。</div>') + conflictBox + recordBox + actions;
     }
 
     function confirmImportAiResults() {
@@ -1008,35 +1636,46 @@
         const total = batches[currentIdx].total;
 
         aiResults.forEach(item => {
-            const name = (item.name || '').trim();
-            if(!name) { skipped++; return; }
-            let nums = [...new Set((item.numbers || []).map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= total))];
+            const name = cleanAiName(item.name);
+            if(!name) return;
+            const key = aiNameKey(name);
+            const nums = [...new Set((item.numbers || []).map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= total))];
 
-            const existing = batches[currentIdx].customers.find(c => c.name === name);
+            const existing = batches[currentIdx].customers.find(c => aiNameKey(c.name) === key);
+            const ownedElsewhere = new Set(batches[currentIdx].customers.filter(c => aiNameKey(c.name) !== key).flatMap(c => c.nums.flat()));
+            const fresh = nums.filter(n => !ownedElsewhere.has(n));
+
             if(existing) {
-                const owned = existing.nums.flat();
-                const fresh = nums.filter(n => !owned.includes(n));
-                if(fresh.length) {
-                    existing.nums.push(fresh.sort((a, b) => a - b));
-                    imported += fresh.length;
-                } else skipped++;
+                const owned = new Set(existing.nums.flat());
+                const add = fresh.filter(n => !owned.has(n));
+                if(add.length) { existing.nums.push(add.sort((a, b) => a - b)); imported += add.length; }
+                skipped += nums.length - add.length;
             } else {
-                if(nums.length) {
-                    batches[currentIdx].customers.unshift({ name, nums: [nums.sort((a, b) => a - b)] });
-                    imported += nums.length;
-                } else skipped++;
+                if(fresh.length) {
+                    batches[currentIdx].customers.unshift({ name, nums: [fresh.sort((a, b) => a - b)] });
+                    imported += fresh.length;
+                    skipped += nums.length - fresh.length;
+                } else skipped += nums.length;
             }
         });
 
         aiResults = [];
+        aiConflicts = [];
+        editingAiResultIndex = null;
         renderAiImages();
+        renderAiPreview();
         renderAll();
         save();
-        setAiStatus(`✅ 导入完成：新增绑定 ${imported} 个编号；跳过/重复 ${skipped} 条。`);
+        setAiStatus(`导入完成：新增编号 ${imported} 个，跳过重复 ${skipped} 个。`);
     }
 
     function clearAiPreview() {
         aiResults = [];
+        aiConflicts = [];
+        aiRecords = [];
+        aiTrace = [];
+        editingAiResultIndex = null;
+        renderAiTrace();
         renderAiPreview();
         setAiStatus('', false);
     }
