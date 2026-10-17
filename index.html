@@ -108,9 +108,16 @@
             border: 1px solid #4a5156 !important;
         }
         :root[data-theme="dark"] .tab {
-            background: #262d34;
-            color: #a9b4bd;
-            border: 1px solid #49535c;
+            background: #151a20;
+            color: #7f8a92;
+            border: 1px solid #30373d;
+        }
+        :root[data-theme="dark"] .tab.active {
+            background: #d7dee2;
+            color: #0b0f12;
+            border-color: #e8eef1;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
         }
         :root[data-theme="dark"] .add-tab-btn {
             background: #181d22;
@@ -295,6 +302,7 @@
         details.prompt-box summary { cursor: pointer; font-size: 12px; font-weight: bold; color: var(--m-text); }
         details.prompt-box summary small { margin-left: 7px; font-size: 11px; color: var(--m-soft); font-weight: normal; }
         details.prompt-box textarea { margin-top: 10px; }
+        .prompt-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 
         .ai-upload { border: 1.5px dashed var(--m-blue-main); background: var(--m-upload-bg); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; color: var(--m-blue-main); font-size: 13px; font-weight: bold; }
         .ai-image-list { display: flex; gap: 10px; overflow-x: auto; margin-top: 10px; padding-bottom: 3px; }
@@ -309,6 +317,9 @@
         .ai-preview-card { background: var(--m-card); border: 1px solid var(--m-border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
         .ai-preview-head { font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
         .ai-badge { font-size: 10px; font-weight: normal; padding: 2px 6px; border-radius: 8px; background: var(--m-badge); color: var(--m-muted); }
+        .ai-badge.review { background: var(--m-warn-bg); color: var(--m-warn-text); border: 1px solid var(--m-warn-border); }
+        .ai-preview-source { margin-top: 6px; font-size: 10px; line-height: 1.4; color: var(--m-muted); }
+        .ai-preview-source strong { color: var(--m-text); }
         .ai-num-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
         .ai-num { background: var(--m-green-rec); color: var(--m-sort-text); border-radius: 6px; padding: 2px 7px; font-size: 12px; }
         .ai-num.warn { background: var(--m-warn-bg); color: var(--m-warn-text); }
@@ -490,7 +501,11 @@
             <details class="prompt-box">
                 <summary>🧾 识别提示词 <small>点击展开</small></summary>
                 <textarea id="aiPrompt" rows="8"></textarea>
-                <div class="ai-note">提示词里的 {total} 会自动替换成当前档位的数字范围。</div>
+                <div class="prompt-actions">
+                    <button type="button" class="mini-btn" onclick="savePrompt()">保存提示词</button>
+                    <button type="button" class="mini-btn" onclick="restoreDefaultPrompt()">还原默认提示词</button>
+                </div>
+                <div class="ai-note">提示词里的 {total} 会自动替换成当前档位的数字范围。提示词只保存在当前浏览器和当前网址；本地文件与 GitHub 链接的保存记录彼此独立。</div>
             </details>
 
             <label class="ai-switch" for="aiStripRemarks">
@@ -560,7 +575,7 @@
     let editingAiResultIndex = null;
     let viewingAiImageIndex = -1;
 
-    const defaultAiPrompt = `【顺序提取 v6】
+    const defaultAiPrompt = `【代理归属提取 v7】
 你是聊天记录截图的信息提取助手。括号里的名字是好友备注，必须忽略；只使用用户自己在群里显示的昵称。
 
 你只处理【当前这一张截图】。不要按用户合并，不要做跨图累计；先读取每条消息右侧显示的时间，最后按网页要求输出。
@@ -572,16 +587,19 @@
 4. 同一条消息里有多个编号时，每个编号单独输出一条记录，但它们的 order 必须相同。
 5. 同一个用户重复发送同一个编号，也按出现顺序各输出一条，不要自行去重。
 6. messageTime 必须逐条照抄该消息右侧的可见时间；能看到日期时输出 YYYY-MM-DD HH:MM:SS，看不到日期时输出 HH:MM:SS，完全看不清时输出空字符串。不要凭空补日期。
-7. 昵称只保留括号外面的群昵称，半角括号 () 和全角括号（）里的内容都属于好友备注，必须删除。例如「Kaki（🍠全世界最爱我吧）」只输出「Kaki」，「Kaki (跑图版)」只输出「Kaki」。如果去掉括号后没有昵称，name 输出空字符串。
-8. 昵称必须逐字照抄括号外的文字；看不清时宁可输出空字符串，不要猜、不要翻译、不要缩写、不要补全。不要把编号归给没有发送它的人。
-9. 不要合并相似昵称，例如 Kaki 与 Kaki_ 必须当作不同用户。
-10. 多个用户发送同一个编号时，全部保留，不要替程序删除或改写；程序会按 messageTime 递增、时间相同再按 order 判断谁更早。
-11. 输出前重新从上到下核对每个 order、messageTime、name、number，并确保 entries 严格按 order 从小到大排列。
-12. 只输出 JSON，不要 Markdown、解释或其他文字。格式：
-{"entries":[{"order":1,"messageTime":"2026-10-16 11:05:00","name":"用户名字","number":2},{"order":2,"messageTime":"2026-10-16 11:05:04","name":"另一个用户","number":4}]}`;
+7. senderName 是截图里这条消息的发送人昵称；ownerName 是这个编号最终归给谁。普通直接发送时 ownerName=senderName。昵称只保留括号外文字，例如「Kaki（🍠全世界最爱我吧）」和「Kaki (跑图版)」都只保留「Kaki」。
+8. 如果一条消息明确帮别人抢，例如「55,56,60,63帮Kaki抢」，senderName 是写消息的人，ownerName 是 Kaki，claimType=proxy，所有被这组文字覆盖的编号都归 Kaki。
+9. 如果一条消息里有多个「名字 + 编号」组，例如「Kaki 1 33 46 55」换行「Kaki_ 73」，则 1、33、46、55 归 Kaki，73 归 Kaki_；发送人仍然是写这条消息的人，claimType=proxy。编号跟随它前面最近出现的名字，直到出现下一个名字。
+10. 只能根据当前消息里明确的文字判断帮抢，不要根据前后其他消息猜测。无法确定归属时，ownerName 先等于 senderName，claimType=uncertain。
+11. 如果发送人昵称完全空白，senderName 固定输出 "__BLANK__"；如果昵称有内容但特殊字符完全无法还原，senderName 固定输出 "__UNREADABLE__"。这两种情况必须输出 avatarHint，用 2 到 10 个字描述头像，例如「粉色小猪头像」「黑白猫耳头像」。仍要照常提取编号，不能跳过。
+12. senderName 和 ownerName 必须逐字保留可读昵称，不要猜、不要翻译、不要缩写、不要补全；不要合并相似昵称，例如 Kaki 与 Kaki_ 必须当作不同用户。
+13. 多个用户发送同一个编号时全部保留，不要删除或改写；程序会按 messageTime 递增、时间相同再按 order 判断谁更早。
+14. 输出前逐条核对 order、messageTime、senderName、ownerName、claimType、number，并确保 entries 按 order 从小到大排列。
+15. 只输出 JSON，不要 Markdown、解释或其他文字。格式：
+{"entries":[{"order":3,"messageTime":"2026-10-16 11:05:02","senderName":"Kaki","ownerName":"Kaki_","claimType":"proxy","avatarHint":"","rawText":"Kaki 1 33 46 55 73","number":73}]}`;
     let aiCfg = JSON.parse(localStorage.getItem('kaki_ai_cfg') || '{}');
     if(!aiCfg.presets) aiCfg.presets = [];
-    const legacyAiPromptMarkers = ['【顺序提取 v3】', '【顺序提取 v4】', '【顺序提取 v5】', '买断图片编号', '请仔细识别聊天记录截图中顾客选择的买断图片编号', '请仔细识别聊天记录截图中每个用户发送的数字编号', '累计统计助手', '单图信息提取助手', '【已识别统计】'];
+    const legacyAiPromptMarkers = ['【顺序提取 v3】', '【顺序提取 v4】', '【顺序提取 v5】', '【顺序提取 v6】', '买断图片编号', '请仔细识别聊天记录截图中顾客选择的买断图片编号', '请仔细识别聊天记录截图中每个用户发送的数字编号', '累计统计助手', '单图信息提取助手', '【已识别统计】'];
     if(!aiCfg.prompt || legacyAiPromptMarkers.some(marker => aiCfg.prompt.includes(marker))) aiCfg.prompt = defaultAiPrompt;
 
     function save() { localStorage.setItem('kaki_v2_data', JSON.stringify(batches)); }
@@ -612,10 +630,23 @@
         aiCfg.endpoint = document.getElementById('aiEndpoint').value.trim();
         aiCfg.key = document.getElementById('aiKey').value.trim();
         aiCfg.model = document.getElementById('aiModel').value.trim();
-        aiCfg.prompt = document.getElementById('aiPrompt').value;
         aiCfg.stripNameRemarks = document.getElementById('aiStripRemarks').checked;
         aiCfg.batchRequest = document.getElementById('aiBatchRequest').checked;
         localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+    }
+
+    function savePrompt() {
+        aiCfg.prompt = document.getElementById('aiPrompt').value;
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+        setAiStatus('提示词已保存到当前浏览器。');
+    }
+
+    function restoreDefaultPrompt() {
+        if(!confirm('确定还原默认提示词吗？当前提示词内容会被覆盖。')) return;
+        aiCfg.prompt = defaultAiPrompt;
+        document.getElementById('aiPrompt').value = defaultAiPrompt;
+        localStorage.setItem('kaki_ai_cfg', JSON.stringify(aiCfg));
+        setAiStatus('已还原并保存默认提示词。');
     }
 
     function updateStripRemarks(enabled) {
@@ -1030,6 +1061,7 @@
                 pushAiTrace(`${groupLabel}：提取 ${groupRaw.length} 条编号记录，时间范围 ${timeText}。`, 'ok');
             }
 
+            resolveProxyOwnersAgainstSenders(rawEntries);
             const entryOrder = entry => Number.isFinite(entry.order) ? entry.order : Number.MAX_SAFE_INTEGER;
             const ordered = rawEntries
                 .map((entry, fallbackOrder) => ({ ...entry, fallbackOrder }))
@@ -1051,7 +1083,12 @@
             const conflictSeen = new Set();
 
             const addClaim = (rawName, rawNum, record) => {
-                const name = aiDisplayName(rawName);
+                const sender = aiIdentity(record.senderRawName ?? rawName, record.avatarHint, record.imageIndex);
+                const owner = aiIdentity(record.ownerRawName || rawName, record.avatarHint, record.imageIndex);
+                const name = owner.display;
+                const claimType = sender.key !== owner.key
+                    ? 'proxy'
+                    : (record.claimType === 'uncertain' ? 'uncertain' : 'direct');
                 const n = Math.trunc(Number(rawNum));
                 const valid = !!name && Number.isFinite(n) && n >= 1 && n <= total;
                 const row = {
@@ -1064,6 +1101,11 @@
                     timeSeconds: record.timeSeconds,
                     name,
                     rawName: cleanAiName(rawName),
+                    senderDisplay: sender.display,
+                    ownerDisplay: owner.display,
+                    claimType,
+                    avatarHint: record.avatarHint || '',
+                    rawText: record.rawText || '',
                     number: Number.isFinite(n) ? n : null,
                     rawNumber: rawNum,
                     status: 'skip',
@@ -1071,15 +1113,16 @@
                 };
                 aiRecords.push(row);
                 if(!valid) return;
-                const key = aiNameKey(name);
+                const key = owner.key;
                 if(claimOwner.has(n)) {
                     const winner = claimOwner.get(n);
                     const winnerInfo = claimInfo.get(n) || { name: winner, existing: true };
-                    row.status = aiNameKey(winner) === key ? 'duplicate' : 'conflict';
+                    const winnerKey = winnerInfo.key || aiNameKey(winner);
+                    row.status = winnerKey === key ? 'duplicate' : 'conflict';
                     row.winner = winner;
                     row.winnerSource = claimSourceLabel(winnerInfo);
-                    row.claimSource = claimSourceLabel(record);
-                    if(aiNameKey(winner) !== key) {
+                    row.claimSource = claimSourceLabel({ ...record, senderDisplay: sender.display, claimType });
+                    if(winnerKey !== key) {
                         const ck = key + '#' + n;
                         if(!conflictSeen.has(ck)) {
                             conflictSeen.add(ck);
@@ -1087,7 +1130,7 @@
                                 number: n,
                                 name,
                                 winner,
-                                claimSource: claimSourceLabel(record),
+                                claimSource: claimSourceLabel({ ...record, senderDisplay: sender.display, claimType }),
                                 winnerSource: claimSourceLabel(winnerInfo)
                             });
                         }
@@ -1098,16 +1141,27 @@
                 claimOwner.set(n, name);
                 claimInfo.set(n, {
                     name,
+                    key,
                     imageIndex: record.imageIndex,
                     partIndex: record.partIndex,
                     order: record.order,
                     messageTime: record.messageTime,
                     timeLabel: record.timeLabel,
                     timeSeconds: record.timeSeconds,
+                    senderDisplay: sender.display,
+                    claimType,
                     existing: false
                 });
-                if(!nameNums.has(key)) { nameNums.set(key, { name, numbers: new Set() }); nameOrder.push(key); }
-                nameNums.get(key).numbers.add(n);
+                if(!nameNums.has(key)) {
+                    nameNums.set(key, { name, numbers: new Set(), senders: new Map(), proxyCount: 0 });
+                    nameOrder.push(key);
+                }
+                const ownerRecord = nameNums.get(key);
+                ownerRecord.numbers.add(n);
+                if(sender.key !== owner.key) {
+                    ownerRecord.proxyCount++;
+                    ownerRecord.senders.set(sender.display, (ownerRecord.senders.get(sender.display) || 0) + 1);
+                }
             };
 
             batches[currentIdx].customers.forEach(c => c.nums.flat().forEach(n => {
@@ -1119,9 +1173,18 @@
             ordered.forEach(entry => addClaim(entry.name, entry.number, entry));
             aiResults = nameOrder.map(key => {
                 const rec = nameNums.get(key);
-                return { name: rec.name, numbers: [...rec.numbers].sort((a,b) => a - b) };
+                return {
+                    name: rec.name,
+                    numbers: [...rec.numbers].sort((a,b) => a - b),
+                    senders: [...rec.senders.entries()],
+                    proxyCount: rec.proxyCount,
+                    needsReview: isPlaceholderName(rec.name)
+                };
             });
             aiConflicts = conflicts.slice();
+            const proxyTotal = aiRecords.filter(record => record.status === 'accept' && record.claimType === 'proxy').length;
+            const pendingNameCount = aiResults.filter(item => item.needsReview || isPlaceholderName(item.name)).length;
+            pushAiTrace(`归属处理完成：${proxyTotal} 个编号来自帮抢，${pendingNameCount} 位用户等待命名。`, pendingNameCount ? 'warn' : 'ok');
             pushAiTrace(`重复编号判定完成：${conflicts.length} 个编号存在多人重复，已按时间更早者优先；时间相同再按行号。`, conflicts.length ? 'warn' : 'ok');
             pushAiTrace(`本次共调用接口 ${requestCount} 次，最终保留 ${aiResults.length} 位用户、${aiResults.reduce((sum, item) => sum + item.numbers.length, 0)} 个编号。`, 'ok');
             renderAiPreview();
@@ -1134,7 +1197,7 @@
                     : '识别完成，但没有提取到有效编号。请展开“识别记录校对”检查昵称与编号，或检查截图清晰度。');
                 return;
             }
-            setAiStatus(`识别完成：${aiResults.length} 个用户、共 ${count} 个编号，已按消息时间递增整理。` + (aiConflicts.length ? `有 ${aiConflicts.length} 个编号被多人重复发送，已按时间更早者优先。` : '') + (occupiedBefore ? `当前档位原有 ${occupiedBefore} 个编号会继续优先保留；如果只是重复测试，请先点“重置本档数字”。` : '') + '请先展开校对表核对，再点击导入。');
+            setAiStatus(`识别完成：${aiResults.length} 个用户、共 ${count} 个编号，已按消息时间递增整理。` + (proxyTotal ? `其中 ${proxyTotal} 个编号已识别为帮抢。` : '') + (pendingNameCount ? `有 ${pendingNameCount} 位空白名或未识别用户名需要先命名。` : '') + (aiConflicts.length ? `有 ${aiConflicts.length} 个编号被多人重复发送，已按时间更早者优先。` : '') + (occupiedBefore ? `当前档位原有 ${occupiedBefore} 个编号会继续优先保留；如果只是重复测试，请先点“重置本档数字”。` : '') + '请先展开校对表核对，再点击导入。');
         } catch(err) {
             pushAiTrace(`识别失败：${err.message}`, 'warn');
             setAiStatus(`识别失败：${err.message}`);
@@ -1187,13 +1250,14 @@
         const box = document.getElementById('aiImageList');
         box.innerHTML = aiImages.map((item, index) => {
             const meta = getAiImageMeta(item);
-            const tooltip = [meta.size, meta.kb, meta.quality].filter(Boolean).join(' · ');
+            const qualityText = meta.quality === '原图' ? '' : meta.quality;
+            const tooltip = [meta.size, meta.kb, qualityText].filter(Boolean).join(' · ');
             return `
             <div class="ai-image-item">
                 <span class="ai-image-seq">#${index + 1}</span>
                 <img src="${item.dataUrl}" alt="${escapeAiHtml(item.name)}" title="点击放大查看" onclick="openAiImageViewer('${item.id}')">
                 <button class="ai-image-remove" onclick="removeAiImage('${item.id}')" aria-label="移除这张截图">✕</button>
-                <span class="ai-image-quality${meta.lowQuality ? ' low-quality' : ''}">${meta.lowQuality ? '尺寸偏小' : meta.quality}</span>
+                ${meta.lowQuality || qualityText ? `<span class="ai-image-quality${meta.lowQuality ? ' low-quality' : ''}">${meta.lowQuality ? '尺寸偏小' : qualityText}</span>` : ''}
                 <div class="ai-image-meta" title="${escapeAiHtml(tooltip)}">
                     ${meta.size ? `<span class="${meta.lowQuality ? 'low-quality' : ''}">${meta.size}</span>` : ''}
                     ${meta.kb ? `<span>${meta.kb}</span>` : ''}
@@ -1222,9 +1286,10 @@
             return;
         }
         const meta = getAiImageMeta(item);
+        const qualityText = meta.quality === '原图' ? '' : meta.quality;
         document.getElementById('aiImageViewerTitle').textContent = `截图 #${viewingAiImageIndex + 1} / ${aiImages.length}`;
         document.getElementById('aiImageViewerImg').src = item.dataUrl;
-        document.getElementById('aiImageViewerMeta').textContent = [meta.size, meta.kb, meta.quality].filter(Boolean).join(' · ') + (meta.lowQuality ? ' · 建议换清晰原图' : '');
+        document.getElementById('aiImageViewerMeta').textContent = [meta.size, meta.kb, qualityText].filter(Boolean).join(' · ') + (meta.lowQuality ? ' · 建议换清晰原图' : '');
         document.getElementById('aiImageViewerCounter').textContent = `${viewingAiImageIndex + 1} / ${aiImages.length}`;
         document.getElementById('aiImageViewerPrev').disabled = viewingAiImageIndex <= 0;
         document.getElementById('aiImageViewerNext').disabled = viewingAiImageIndex >= aiImages.length - 1;
@@ -1488,6 +1553,90 @@
         return aiCfg.stripNameRemarks === false ? name : stripNameRemarks(name);
     }
 
+    function normalizeAiMarker(value) {
+        return cleanAiName(value).replace(/^[\s"'`]+|[\s"'`]+$/g, '').toUpperCase();
+    }
+
+    function aiIdentity(rawName, avatarHint, imageIndex) {
+        const raw = cleanAiName(rawName);
+        const marker = normalizeAiMarker(raw);
+        let type = '';
+        if(marker === '__BLANK__' || marker === 'BLANK' || marker === '空白名') type = 'blank';
+        else if(marker === '__UNREADABLE__' || marker === 'UNREADABLE' || marker === '未识别') type = 'unreadable';
+        else if(!raw) type = 'blank';
+
+        if(type) {
+            const hint = cleanAiName(avatarHint).slice(0, 20) || '未知头像';
+            const label = type === 'blank' ? '空白名' : '未识别用户名';
+            const display = `${label}·${hint}·截图${Number.isInteger(imageIndex) ? imageIndex + 1 : '?'}`;
+            return {
+                display,
+                key: `__PLACEHOLDER__|${type}|${imageIndex}|${hint.replace(/\s+/g, '').toLowerCase()}`,
+                needsReview: true
+            };
+        }
+
+        const display = aiDisplayName(raw);
+        return { display, key: aiNameKey(display), needsReview: false };
+    }
+
+    function isPlaceholderName(value) {
+        const text = cleanAiName(value);
+        return /^(空白名|未识别用户名)·/.test(text) || /^__(BLANK|UNREADABLE)__$/i.test(text);
+    }
+
+    function inferProxyTargetFromText(rawText) {
+        const text = String(rawText == null ? '' : rawText).replace(/\s+/g, ' ').trim();
+        if(!text) return '';
+        let match = text.match(/帮\s*@?\s*(.+?)\s*抢/);
+        if(!match) match = text.match(/(?:代抢|给|帮)\s*@?\s*([^\s,，。;；:：、]+)/);
+        return match ? aiDisplayName(match[1].replace(/^@/, '').trim()) : '';
+    }
+
+    function inferTextOwnerForNumber(rawText, number) {
+        const text = String(rawText == null ? '' : rawText).replace(/\r/g, '');
+        if(!text) return '';
+        const numberRe = /\d{1,3}/g;
+        let currentOwner = '';
+        let previousEnd = 0;
+        let match;
+        while((match = numberRe.exec(text))) {
+            const gap = text.slice(previousEnd, match.index)
+                .replace(/^[\s,，、;；:：.。()（）[\]【】]+|[\s,，、;；:：.。()（）[\]【】]+$/g, '')
+                .trim();
+            if(gap && /[A-Za-z\u3400-\u9FFF\u3040-\u30FF\uAC00-\uD7AF_]/.test(gap) && !/^(帮|给|代抢|买|要|抢|扣|留|图|张|号|共|第)/.test(gap)) {
+                currentOwner = aiDisplayName(gap);
+            }
+            if(Number(match[0]) === Number(number) && currentOwner) return currentOwner;
+            previousEnd = match.index + match[0].length;
+        }
+        return '';
+    }
+
+    function resolveProxyOwnersAgainstSenders(entries) {
+        const byImage = new Map();
+        entries.forEach(entry => {
+            const sender = aiDisplayName(entry.senderRawName);
+            if(!sender || isPlaceholderName(sender)) return;
+            const key = sender.replace(/[、,，.。;；:：]+$/g, '').replace(/\s+/g, '').toLowerCase();
+            if(!key) return;
+            if(!byImage.has(entry.imageIndex)) byImage.set(entry.imageIndex, new Map());
+            const nameMap = byImage.get(entry.imageIndex);
+            if(!nameMap.has(key)) nameMap.set(key, new Set());
+            nameMap.get(key).add(sender);
+        });
+        entries.forEach(entry => {
+            if(entry.claimType !== 'proxy' || !entry.ownerRawName || isPlaceholderName(entry.ownerRawName)) return;
+            const ownerKey = aiDisplayName(entry.ownerRawName).replace(/[、,，.。;；:：]+$/g, '').replace(/\s+/g, '').toLowerCase();
+            const matches = byImage.get(entry.imageIndex)?.get(ownerKey);
+            if(matches && matches.size === 1) {
+                const exactName = [...matches][0];
+                entry.ownerRawName = exactName;
+                entry.name = exactName;
+            }
+        });
+    }
+
     function claimSourceLabel(info) {
         if(!info) return '顺序未知';
         if(info.existing) return '当前档已有记录';
@@ -1495,7 +1644,8 @@
         const part = Number.isInteger(info.partIndex) && info.partIndex > 0 ? `第 ${info.partIndex + 1} 段` : '';
         const time = info.timeLabel || info.messageTime || '';
         const order = Number.isFinite(info.order) ? `第 ${info.order} 行` : '行号未识别';
-        return [image, part, time, order].filter(Boolean).join(' · ');
+        const sender = info.senderDisplay ? `${info.claimType === 'proxy' ? '帮抢' : '发送'}：${info.senderDisplay}` : '';
+        return [image, part, time, order, sender].filter(Boolean).join(' · ');
     }
 
     function aiNameKey(value) {
@@ -1529,25 +1679,44 @@
         };
         list.forEach(item => {
             if(!item) return;
-            const name = String(item.name || item.user || item.userName || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const legacyName = String(item.name || item.user || item.userName || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const senderRawName = String(item.senderName ?? item.sender ?? item.from ?? legacyName).replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const ownerRawName = String(item.ownerName ?? item.owner ?? item.targetName ?? legacyName).replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const avatarHint = String(item.avatarHint ?? item.avatar ?? '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const rawText = String(item.rawText ?? item.messageText ?? item.text ?? '').trim();
+            const claimTypeRaw = String(item.claimType ?? item.claim ?? '').trim().toLowerCase();
             const order = toOrder(item.order ?? item.seq ?? item.position);
             const messageTime = String(item.messageTime ?? item.datetime ?? item.timestamp ?? item.time ?? '').trim();
             const parsedTime = normalizeAiTime(messageTime);
             const rawImageIndex = Number(item.image ?? item.imageIndex ?? item.screenshot ?? item.imageNo ?? NaN);
             const aiImageIndex = Number.isFinite(rawImageIndex) && rawImageIndex > 0 ? Math.trunc(rawImageIndex) - 1 : NaN;
+            const proxyTarget = inferProxyTargetFromText(rawText);
             const nums = Array.isArray(item.numbers) ? item.numbers
                 : (Array.isArray(item.num) ? item.num
                 : (item.num !== undefined && item.num !== null ? [item.num] : []));
-            const addEntry = number => entries.push({
-                order,
-                name,
-                number,
-                messageTime,
-                timeLabel: parsedTime.label,
-                timeSeconds: parsedTime.seconds,
-                timeHasDate: parsedTime.hasDate,
-                aiImageIndex
-            });
+            const addEntry = number => {
+                const inferredOwner = proxyTarget || inferTextOwnerForNumber(rawText, number);
+                const owner = inferredOwner || ownerRawName || senderRawName;
+                let claimType = claimTypeRaw === 'proxy' || claimTypeRaw.includes('帮')
+                    ? 'proxy'
+                    : (claimTypeRaw === 'uncertain' || claimTypeRaw.includes('待') ? 'uncertain' : 'direct');
+                if(inferredOwner && aiNameKey(inferredOwner) !== aiNameKey(senderRawName)) claimType = 'proxy';
+                entries.push({
+                    order,
+                    name: owner,
+                    senderRawName,
+                    ownerRawName: owner,
+                    number,
+                    messageTime,
+                    rawText,
+                    avatarHint,
+                    claimType,
+                    timeLabel: parsedTime.label,
+                    timeSeconds: parsedTime.seconds,
+                    timeHasDate: parsedTime.hasDate,
+                    aiImageIndex
+                });
+            };
             nums.forEach(v => addEntry(toNumber(v)));
             if(item.number !== undefined && item.number !== null) addEntry(toNumber(item.number));
         });
@@ -1651,6 +1820,7 @@
                 return;
             }
             aiResults[idx].name = name;
+            aiResults[idx].needsReview = isPlaceholderName(name);
         }
         editingAiResultIndex = null;
         renderAiPreview();
@@ -1665,6 +1835,12 @@
         const cards = aiResults.map((item, index) => {
             const name = escapeAiHtml(item.name || '未识别用户');
             const exists = current.customers.some(c => aiNameKey(c.name) === aiNameKey(item.name));
+            const senderText = (item.senders || []).map(([sender, count]) => `${sender}${count > 1 ? ` ×${count}` : ''}`).join('、');
+            const sourceLine = item.proxyCount
+                ? `<div class="ai-preview-source">帮抢来源：<strong>${escapeAiHtml(senderText)}</strong>，共 ${item.proxyCount} 个编号</div>`
+                : '';
+            const badgeText = item.needsReview ? '待命名' : (exists ? '已有用户' : '新用户');
+            const badgeClass = item.needsReview ? ' review' : (exists ? ' exists' : '');
             const chips = item.numbers.map(n => {
                 const taken = sold.includes(n);
                 return `<span class="ai-num${taken ? ' warn' : ''}">${n}${taken ? ' 已占用' : ''}</span>`;
@@ -1674,7 +1850,8 @@
                 : `<button type="button" class="ai-name-btn" onclick="startEditAiResultName(${index})" title="点击修改用户名">${name}</button>`;
             return `
                 <div class="ai-preview-card">
-                    <div class="ai-preview-head">${nameEditor}<span class="ai-badge${exists ? ' exists' : ''}">${exists ? '已有用户' : '新用户'}</span></div>
+                    <div class="ai-preview-head">${nameEditor}<span class="ai-badge${badgeClass}">${badgeText}</span></div>
+                    ${sourceLine}
                     <div class="ai-num-list">${chips}</div>
                 </div>
             `;
@@ -1693,18 +1870,20 @@
         const recordRows = aiRecords.map(record => {
             const image = aiImages[record.imageIndex];
             const imageLabel = `#${record.imageIndex + 1}${image?.segmented ? ` · 段${record.partIndex + 1}` : ''}`;
-            const name = record.name ? escapeAiHtml(record.name) : '<span class="ai-record-status skip">空昵称</span>';
+            const sender = record.senderDisplay ? escapeAiHtml(record.senderDisplay) : '<span class="ai-record-status skip">空昵称</span>';
+            const owner = record.ownerDisplay ? escapeAiHtml(record.ownerDisplay) : '<span class="ai-record-status skip">空昵称</span>';
+            const claimText = record.claimType === 'proxy' ? '帮抢' : (record.claimType === 'uncertain' ? '待确认' : '直接');
             const number = record.number === null ? escapeAiHtml(record.rawNumber) : record.number;
             const winner = record.winner ? `（${escapeAiHtml(record.winner)}${record.winnerSource ? ` · ${escapeAiHtml(record.winnerSource)}` : ''}）` : '';
             const time = record.timeLabel || escapeAiHtml(record.messageTime) || '—';
-            return `<tr><td>${imageLabel}</td><td>${time}</td><td>${Number.isFinite(record.order) ? record.order : '—'}</td><td>${name}</td><td>${number}</td><td class="ai-record-status ${record.status}">${statusText[record.status]}${winner}</td></tr>`;
+            return `<tr><td>${imageLabel}</td><td>${time}</td><td>${Number.isFinite(record.order) ? record.order : '—'}</td><td>${sender}</td><td>${owner}</td><td>${claimText}</td><td>${number}</td><td class="ai-record-status ${record.status}">${statusText[record.status]}${winner}</td></tr>`;
         }).join('');
         const recordBox = aiRecords.length ? `
             <details class="ai-record-box">
                 <summary>识别记录校对（${aiRecords.length} 条）— 顺序有疑问时展开检查</summary>
                 <div class="ai-note" style="margin-top:5px;">排序依据：先按截图 #1 → #2 → #3，再按每张截图内读取到的消息时间递增；时间相同或读不到时间时，再按从上到下的绝对行号。昵称识别错时，可以直接点击上方预览里的用户名修改。</div>
                 <div style="overflow-x:auto;"><table class="ai-record-table">
-                    <thead><tr><th>截图</th><th>消息时间</th><th>行号</th><th>昵称</th><th>编号</th><th>结果</th></tr></thead>
+                    <thead><tr><th>截图</th><th>消息时间</th><th>行号</th><th>发送人</th><th>归属人</th><th>类型</th><th>编号</th><th>结果</th></tr></thead>
                     <tbody>${recordRows}</tbody>
                 </table></div>
             </details>
@@ -1721,6 +1900,11 @@
 
     function confirmImportAiResults() {
         if(!aiResults.length) return;
+        const pendingNames = aiResults.filter(item => item.needsReview || isPlaceholderName(item.name));
+        if(pendingNames.length) {
+            alert(`还有 ${pendingNames.length} 个空白名或未识别用户名未命名，请先点击预览里的名字修改后再导入。`);
+            return;
+        }
         let imported = 0, skipped = 0;
         const total = batches[currentIdx].total;
 
