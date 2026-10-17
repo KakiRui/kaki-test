@@ -297,10 +297,12 @@
         details.prompt-box textarea { margin-top: 10px; }
 
         .ai-upload { border: 1.5px dashed var(--m-blue-main); background: var(--m-upload-bg); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; color: var(--m-blue-main); font-size: 13px; font-weight: bold; }
-        .ai-image-list { display: flex; gap: 8px; overflow-x: auto; margin-top: 10px; }
-        .ai-image-item { position: relative; flex-shrink: 0; }
-        .ai-image-item img { height: 70px; width: auto; max-width: 130px; object-fit: cover; border-radius: 8px; border: 1px solid var(--m-border); display: block; }
+        .ai-image-list { display: flex; gap: 10px; overflow-x: auto; margin-top: 10px; padding-bottom: 3px; }
+        .ai-image-item { position: relative; flex: 0 0 96px; width: 96px; }
+        .ai-image-item img { width: 96px; height: 112px; object-fit: contain; background: var(--m-panel); border-radius: 8px; border: 1px solid var(--m-border); display: block; cursor: zoom-in; }
         .ai-image-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; border: none; background: var(--m-remove-bg); color: var(--m-on-accent); font-size: 10px; line-height: 18px; padding: 0; cursor: pointer; }
+        .ai-image-quality { position: absolute; right: 3px; bottom: 3px; padding: 1px 5px; border-radius: 5px; background: rgba(20,24,28,.78); color: #fff; font-size: 9px; line-height: 1.4; pointer-events: none; }
+        .ai-image-quality.low-quality { background: var(--m-warn-bg); color: var(--m-warn-text); border: 1px solid var(--m-warn-border); }
         .ai-status { min-height: 18px; font-size: 12px; color: var(--m-text); background: var(--m-status); border-radius: 8px; padding: 8px; margin-top: 8px; display: none; }
         .ai-status.show { display: block; }
         .ai-preview { margin-top: 10px; }
@@ -351,10 +353,23 @@
         .ai-conflict-list { margin-top: 6px; display: grid; gap: 4px; }
         .ai-conflict-row { font-size: 12px; line-height: 1.4; }
         .ai-image-seq { position: absolute; top: 3px; left: 3px; background: rgba(20,24,28,.78); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 6px; z-index: 1; }
-        .ai-image-meta { margin-top: 3px; font-size: 9px; color: var(--m-soft); text-align: center; white-space: nowrap; }
-        .ai-image-meta.low-quality { color: var(--m-warn-text); font-weight: bold; }
+        .ai-image-meta { margin-top: 4px; font-size: 9px; color: var(--m-soft); text-align: center; white-space: normal; line-height: 1.25; }
+        .ai-image-meta span { display: block; overflow: hidden; text-overflow: ellipsis; }
+        .ai-image-meta .low-quality { color: var(--m-warn-text); font-weight: bold; }
         .ai-image-move { display: flex; justify-content: center; gap: 3px; margin-top: 2px; }
         .ai-image-move button { border: 1px solid var(--m-border); background: var(--m-chip); color: var(--m-muted); border-radius: 4px; font-size: 9px; line-height: 15px; height: 16px; padding: 0 5px; cursor: pointer; }
+        .ai-image-viewer { position: fixed; inset: 0; z-index: 100010; display: none; align-items: center; justify-content: center; padding: 14px; background: rgba(0,0,0,.72); }
+        .ai-image-viewer.show { display: flex; }
+        .ai-image-viewer-panel { width: min(94vw, 760px); max-height: 94vh; display: flex; flex-direction: column; background: var(--m-modal); border: 1px solid var(--m-border); border-radius: 14px; padding: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.35); }
+        .ai-image-viewer-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .ai-image-viewer-title { font-size: 13px; font-weight: bold; color: var(--m-text); }
+        .ai-image-viewer-close { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--m-border); background: var(--m-chip); color: var(--m-text); cursor: pointer; }
+        .ai-image-viewer-img { width: 100%; max-height: 68vh; object-fit: contain; background: var(--m-panel); border: 1px solid var(--m-border); border-radius: 10px; }
+        .ai-image-viewer-meta { margin-top: 7px; min-height: 16px; text-align: center; font-size: 11px; color: var(--m-soft); }
+        .ai-image-viewer-actions { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin-top: 8px; }
+        .ai-image-viewer-actions button { height: 34px; border: 1px solid var(--m-border); border-radius: 8px; background: var(--m-chip); color: var(--m-text); font-size: 11px; font-weight: bold; cursor: pointer; }
+        .ai-image-viewer-actions button:disabled { opacity: .4; cursor: default; }
+        #aiImageViewerCounter { min-width: 64px; text-align: center; font-size: 11px; color: var(--m-muted); }
         .ai-record-box { margin-top: 8px; background: var(--m-card); border: 1px solid var(--m-border); border-radius: 10px; padding: 8px 10px; font-size: 12px; }
         .ai-record-box summary { cursor: pointer; font-weight: bold; color: var(--m-text); }
         .ai-record-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
@@ -371,7 +386,7 @@
 </head>
 <body>
 
-<button class="theme-btn" onclick="openThemeModal()" title="切换主题">🎨</button>
+<button id="themeToggleBtn" class="theme-btn" onclick="openThemeModal()" title="切换主题">🤍</button>
 
 <div id="themeModalBg" class="theme-modal-bg" onclick="closeThemeModal(event)">
     <div class="theme-modal" onclick="event.stopPropagation()">
@@ -410,7 +425,7 @@
 
 <div class="pool-box">
     <h4 style="margin:0; color:var(--m-muted); display:flex; justify-content:space-between; align-items:center;">
-        <span>🔢 数字表</span>
+        <span>数字表</span>
         <span class="copy-btn" onclick="copyRemaining()">复制剩余号码</span>
     </h4>
     <div class="scroll-area">
@@ -420,10 +435,10 @@
 
 <div style="background:var(--m-card); padding:18px; border-radius:15px; box-shadow:0 4px 12px var(--m-shadow); margin-top:12px;">
     <div class="list-header">
-        <h4 class="list-header-title">👥 顾客清单 <small class="cust-edit-hint">点名字可改</small></h4>
+        <h4 class="list-header-title">顾客清单 <small class="cust-edit-hint">点击名字可修改</small></h4>
         <div class="list-header-actions">
-            <button class="sort-btn" onclick="sortAllCustomerNums()">🔢 一键按编号排序</button>
-            <button class="copy-btn" onclick="toggleAiPanel()">🤖 AI导入</button>
+            <button class="sort-btn" onclick="sortAllCustomerNums()">一键排序</button>
+            <button class="copy-btn" onclick="toggleAiPanel()">AI导入</button>
         </div>
     </div>
 
@@ -489,7 +504,7 @@
             <label class="ai-switch" for="aiBatchRequest">
                 <input type="checkbox" id="aiBatchRequest" onchange="updateAiBatchRequest(this.checked)">
                 <span>
-                    <strong>多图合并识别（实验）</strong>
+                    <strong>多图合并识别</strong>
                     <small>把多张截图放进同一次接口请求，减少请求次数。图片本身的 token 计费通常不会减少，且准确率可能低于逐张识别，默认关闭。</small>
                 </span>
             </label>
@@ -515,6 +530,22 @@
     <div class="footer-credit">@Kaki 内部交流版本 禁止二传</div>
 </div>
 
+<div id="aiImageViewer" class="ai-image-viewer" onclick="closeAiImageViewer(event)">
+    <div class="ai-image-viewer-panel" onclick="event.stopPropagation()">
+        <div class="ai-image-viewer-head">
+            <span id="aiImageViewerTitle" class="ai-image-viewer-title">图片预览</span>
+            <button type="button" class="ai-image-viewer-close" onclick="closeAiImageViewer()" aria-label="关闭预览">✕</button>
+        </div>
+        <img id="aiImageViewerImg" class="ai-image-viewer-img" alt="聊天记录截图预览">
+        <div id="aiImageViewerMeta" class="ai-image-viewer-meta"></div>
+        <div class="ai-image-viewer-actions">
+            <button type="button" id="aiImageViewerPrev" onclick="moveAiImageViewer(-1)">‹ 上一张</button>
+            <span id="aiImageViewerCounter">0 / 0</span>
+            <button type="button" id="aiImageViewerNext" onclick="moveAiImageViewer(1)">下一张 ›</button>
+        </div>
+    </div>
+</div>
+
 <script>
     let batches = JSON.parse(localStorage.getItem('kaki_v2_data')) || [{ id: '默认档', customers: [], total: 50 }];
     let currentIdx = 0;
@@ -527,6 +558,7 @@
     let aiTrace = [];
     let editingCustomerIndex = null;
     let editingAiResultIndex = null;
+    let viewingAiImageIndex = -1;
 
     const defaultAiPrompt = `【顺序提取 v6】
 你是聊天记录截图的信息提取助手。括号里的名字是好友备注，必须忽略；只使用用户自己在群里显示的昵称。
@@ -540,9 +572,9 @@
 4. 同一条消息里有多个编号时，每个编号单独输出一条记录，但它们的 order 必须相同。
 5. 同一个用户重复发送同一个编号，也按出现顺序各输出一条，不要自行去重。
 6. messageTime 必须逐条照抄该消息右侧的可见时间；能看到日期时输出 YYYY-MM-DD HH:MM:SS，看不到日期时输出 HH:MM:SS，完全看不清时输出空字符串。不要凭空补日期。
-7. 昵称只保留括号外面的群昵称，半角括号 () 和全角括号（）里的内容都属于好友备注，必须删除。例如「Kaki（🍠全世界最爱我吧）」只输出「Kaki」，「ve (wen)」只输出「ve」。如果去掉括号后没有昵称，name 输出空字符串。
+7. 昵称只保留括号外面的群昵称，半角括号 () 和全角括号（）里的内容都属于好友备注，必须删除。例如「Kaki（🍠全世界最爱我吧）」只输出「Kaki」，「Kaki (跑图版)」只输出「Kaki」。如果去掉括号后没有昵称，name 输出空字符串。
 8. 昵称必须逐字照抄括号外的文字；看不清时宁可输出空字符串，不要猜、不要翻译、不要缩写、不要补全。不要把编号归给没有发送它的人。
-9. 不要合并相似昵称，例如 Elysiam_ 与 Elysium_ 必须当作不同用户。
+9. 不要合并相似昵称，例如 Kaki 与 Kaki_ 必须当作不同用户。
 10. 多个用户发送同一个编号时，全部保留，不要替程序删除或改写；程序会按 messageTime 递增、时间相同再按 order 判断谁更早。
 11. 输出前重新从上到下核对每个 order、messageTime、name、number，并确保 entries 严格按 order 从小到大排列。
 12. 只输出 JSON，不要 Markdown、解释或其他文字。格式：
@@ -566,6 +598,7 @@
         const current = document.documentElement.dataset.theme;
         document.getElementById('theme-cream').classList.toggle('active', current === 'cream');
         document.getElementById('theme-dark').classList.toggle('active', current === 'dark');
+        document.getElementById('themeToggleBtn').textContent = current === 'dark' ? '🖤' : '🤍';
     }
     function changeTheme(theme) {
         document.documentElement.dataset.theme = theme;
@@ -1141,26 +1174,82 @@
         renderAiImages();
     }
 
+    function getAiImageMeta(item) {
+        return {
+            kb: item.size ? `${Math.round(item.size / 1024)} KB` : '',
+            size: item.width && item.height ? `${item.width}×${item.height}` : '',
+            quality: item.segmented ? `分段 ${item.segments?.length || 1}` : (item.reencoded ? '已缩放' : '原图'),
+            lowQuality: !!(item.width && item.width < 600)
+        };
+    }
+
     function renderAiImages() {
         const box = document.getElementById('aiImageList');
         box.innerHTML = aiImages.map((item, index) => {
-            const kb = item.size ? `${Math.round(item.size / 1024)} KB` : '';
-            const size = item.width && item.height ? `${item.width}×${item.height}` : '';
-            const quality = item.segmented ? `分段 ${item.segments?.length || 1}` : (item.reencoded ? '已缩放' : '原图');
-            const lowQuality = item.width && item.width < 600;
+            const meta = getAiImageMeta(item);
+            const tooltip = [meta.size, meta.kb, meta.quality].filter(Boolean).join(' · ');
             return `
             <div class="ai-image-item">
                 <span class="ai-image-seq">#${index + 1}</span>
-                <img src="${item.dataUrl}" alt="${item.name}" title="${item.name}">
-                <button class="ai-image-remove" onclick="removeAiImage('${item.id}')">✕</button>
-                <div class="ai-image-meta${lowQuality ? ' low-quality' : ''}" title="${lowQuality ? '图片宽度较小，昵称可能难以辨认，建议换清晰原图' : quality}">${[size, kb, quality].filter(Boolean).join(' · ')}${lowQuality ? ' · 建议换清晰原图' : ''}</div>
+                <img src="${item.dataUrl}" alt="${escapeAiHtml(item.name)}" title="点击放大查看" onclick="openAiImageViewer('${item.id}')">
+                <button class="ai-image-remove" onclick="removeAiImage('${item.id}')" aria-label="移除这张截图">✕</button>
+                <span class="ai-image-quality${meta.lowQuality ? ' low-quality' : ''}">${meta.lowQuality ? '尺寸偏小' : meta.quality}</span>
+                <div class="ai-image-meta" title="${escapeAiHtml(tooltip)}">
+                    ${meta.size ? `<span class="${meta.lowQuality ? 'low-quality' : ''}">${meta.size}</span>` : ''}
+                    ${meta.kb ? `<span>${meta.kb}</span>` : ''}
+                </div>
                 <div class="ai-image-move">
                     <button onclick="moveAiImage('${item.id}', -1)" title="前移">‹</button>
                     <button onclick="moveAiImage('${item.id}', 1)" title="后移">›</button>
                 </div>
             </div>`;
         }).join('');
+        if(viewingAiImageIndex >= aiImages.length) closeAiImageViewer();
     }
+
+    function openAiImageViewer(id) {
+        const index = aiImages.findIndex(item => item.id === id);
+        if(index < 0) return;
+        viewingAiImageIndex = index;
+        renderAiImageViewer();
+        document.getElementById('aiImageViewer').classList.add('show');
+    }
+
+    function renderAiImageViewer() {
+        const item = aiImages[viewingAiImageIndex];
+        if(!item) {
+            closeAiImageViewer();
+            return;
+        }
+        const meta = getAiImageMeta(item);
+        document.getElementById('aiImageViewerTitle').textContent = `截图 #${viewingAiImageIndex + 1} / ${aiImages.length}`;
+        document.getElementById('aiImageViewerImg').src = item.dataUrl;
+        document.getElementById('aiImageViewerMeta').textContent = [meta.size, meta.kb, meta.quality].filter(Boolean).join(' · ') + (meta.lowQuality ? ' · 建议换清晰原图' : '');
+        document.getElementById('aiImageViewerCounter').textContent = `${viewingAiImageIndex + 1} / ${aiImages.length}`;
+        document.getElementById('aiImageViewerPrev').disabled = viewingAiImageIndex <= 0;
+        document.getElementById('aiImageViewerNext').disabled = viewingAiImageIndex >= aiImages.length - 1;
+    }
+
+    function moveAiImageViewer(delta) {
+        const next = viewingAiImageIndex + delta;
+        if(next < 0 || next >= aiImages.length) return;
+        viewingAiImageIndex = next;
+        renderAiImageViewer();
+    }
+
+    function closeAiImageViewer(event) {
+        if(event && event.target !== event.currentTarget) return;
+        viewingAiImageIndex = -1;
+        document.getElementById('aiImageViewer').classList.remove('show');
+        document.getElementById('aiImageViewerImg').removeAttribute('src');
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if(!document.getElementById('aiImageViewer').classList.contains('show')) return;
+        if(event.key === 'Escape') closeAiImageViewer();
+        else if(event.key === 'ArrowLeft') moveAiImageViewer(-1);
+        else if(event.key === 'ArrowRight') moveAiImageViewer(1);
+    });
 
     function readFileAsDataURL(file) {
         return new Promise((resolve, reject) => {
